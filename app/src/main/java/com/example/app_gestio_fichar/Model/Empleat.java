@@ -1,13 +1,10 @@
 package com.example.app_gestio_fichar.Model;
 
-import static android.app.SearchManager.QUERY;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class Empleat {
     private int id;
@@ -30,29 +27,37 @@ public class Empleat {
     }
 
     // Les credencials per entrar a la db
-    static final String DB_URL = "jdbc:mysql://sql.freedb.tech/freedb_nca_hores";
-    static final String USER = "freedb_abdullah_fatah";
-    static final String PASS = "5uAYk&Y6RctMcq6";
 
-    public Empleat filterById(String id) {
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS); Statement stmt = conn.createStatement()) { // Intentem conectar a la base de dades
-            try (PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM empleats where id =(?)")){
-                pstmt.setInt(1, Integer.parseInt(id));
-                ResultSet rs = pstmt.executeQuery();
+    Class.forName("com.mysql.jdbc.Driver");
+    static final String DB_URL = "jdbc:mysql://sql.freedb.tech/freedb_springbootAA";
+    static final String USER = "freedb_alexaiguade";
+    static final String PASS = "J@Dp$6nvsaGt?Uz";
 
-                Empleat empleat = new Empleat(rs.getInt("id"), rs.getString("carreg"), rs.getString("nom"), rs.getString("cognom"),
-                        rs.getString("correu_electronic"), rs.getString("contrasenya")); // Creem el empleat amb els camps del empleat que ha trobat a la db
+    public Empleat filterById(int id) { // mirar si va be i veure si es poden eliminar els altres models tant de java com de db
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+             PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM empleats WHERE id = ?")) { // aqui falle
+
+            pstmt.setInt(1, id);
+            ResultSet resultat = pstmt.executeQuery();
+
+            if (resultat.next()) {
+
+                Empleat empleat = new Empleat(resultat.getInt("id"), resultat.getString("carreg"), resultat.getString("nom"), resultat.getString("cognom"),
+                        resultat.getString("correu_electronic"), resultat.getString("contrasenya")); // Creem el empleat amb els camps del empleat que ha trobat a la db
 
                 return empleat;
 
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } else { // no ha trobat ningu
+
+                return null;
+
             }
+
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
-
-        return null;
     }
 
     public int getId() {

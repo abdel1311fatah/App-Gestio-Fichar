@@ -1,7 +1,5 @@
 package com.example.app_gestio_fichar;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -9,30 +7,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.app_gestio_fichar.Model.Empleat;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class ContadorHores extends AppCompatActivity {
 
 //    private ActivityResultLauncher<Intent> filePickerLauncher;
-    private Calculator calculator;
-    ZoneId zonaHoraria = ZoneId.systemDefault(); // Agafe la zona horaria del mobil
-    LocalDateTime horaActual = LocalDateTime.now(zonaHoraria); // Agafe la hora actual de la zona horaria, al ser LocalDateTime ens donarie algo amb aquest format: 2019-01-31T12:30:45
+//    private Calculator calculator;
+//    ZoneId zonaHoraria = ZoneId.systemDefault(); // Agafe la zona horaria del mobil
+//    LocalDateTime horaActual = LocalDateTime.now(zonaHoraria); // Agafe la hora actual de la zona horaria, al ser LocalDateTime ens donarie algo amb aquest format: 2019-01-31T12:30:45
 
     private EditText idForm;
     private TextView resultat;
@@ -42,9 +29,9 @@ public class ContadorHores extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contador_hores);
 
-        calculator = new Calculator();
+//        calculator = new Calculator();
         idForm = (EditText) findViewById(R.id.idForm);
-        resultat = (TextView) findViewById(R.id.textView);
+        resultat = (TextView) findViewById(R.id.textViewId);
 
 //        filePickerLauncher = registerForActivityResult(
 //                new ActivityResultContracts.StartActivityForResult(),
@@ -79,9 +66,10 @@ public class ContadorHores extends AppCompatActivity {
     }
 
     public void search(View view) {
-        String idText = idForm.getText().toString();
+        String texte = idForm.getText().toString();
+        int idText = Integer.parseInt(texte);
 
-        if (!idText.isEmpty()) {
+        if (!texte.isEmpty()) {
             Empleat empleat = new Empleat();
             empleat = empleat.filterById(idText);
 
@@ -95,34 +83,34 @@ public class ContadorHores extends AppCompatActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void readCSV(String filePath) throws IOException, CsvValidationException {
-        CSVReader reader = new CSVReader(new FileReader(filePath));
-        String[] headers = reader.readNext(); // Te els noms de les columnes, els dies
-        String[] nextLine;
-        while ((nextLine = reader.readNext()) != null) {
-            // Acceso a los datos de cada columna en la fila actual
-            String dia = nextLine[0];
-            String horari = nextLine[1];
-            int contadorHores = calculator.contadorHores(horari);
-
-            if (!calculator.isWeekend(horaActual.getDayOfWeek().getValue())) { // Si no es dissabte o diumenge
-
-                if (dia.equals(horaActual.getDayOfWeek().toString())) { // Si el dia del CSV coincideix amb el dia actual i es entre setmana
-                    int horaCSV = Integer.parseInt(horari.substring(0, 2)); // Agafe les hores del CSV // by copilot
-                    int minutsCSV = Integer.parseInt(horari.substring(3, 5)); // Agafe els minuts del CSV // by copilot
-                    if (calculator.itsNow(horaCSV, minutsCSV)){
-
-                    }
-                }
-
-            }else{
-                Toast.makeText(this, "Avui no es treballa", Toast.LENGTH_SHORT).show();
-            }
-
-        }
-        reader.close();
-    }
+//    @RequiresApi(api = Build.VERSION_CODES.O)
+//    private void readCSV(String filePath) throws IOException, CsvValidationException {
+//        CSVReader reader = new CSVReader(new FileReader(filePath));
+//        String[] headers = reader.readNext(); // Te els noms de les columnes, els dies
+//        String[] nextLine;
+//        while ((nextLine = reader.readNext()) != null) {
+//            // Acceso a los datos de cada columna en la fila actual
+//            String dia = nextLine[0];
+//            String horari = nextLine[1];
+//            int contadorHores = calculator.contadorHores(horari);
+//
+//            if (!calculator.isWeekend(horaActual.getDayOfWeek().getValue())) { // Si no es dissabte o diumenge
+//
+//                if (dia.equals(horaActual.getDayOfWeek().toString())) { // Si el dia del CSV coincideix amb el dia actual i es entre setmana
+//                    int horaCSV = Integer.parseInt(horari.substring(0, 2)); // Agafe les hores del CSV // by copilot
+//                    int minutsCSV = Integer.parseInt(horari.substring(3, 5)); // Agafe els minuts del CSV // by copilot
+//                    if (calculator.itsNow(horaCSV, minutsCSV)){
+//
+//                    }
+//                }
+//
+//            }else{
+//                Toast.makeText(this, "Avui no es treballa", Toast.LENGTH_SHORT).show();
+//            }
+//
+//        }
+//        reader.close();
+//    }
 
 //    private void openFilePicker() {
 //        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
