@@ -28,7 +28,6 @@ public class Empleat {
 
     // Les credencials per entrar a la db
 
-    Class.forName("com.mysql.jdbc.Driver");
     static final String DB_URL = "jdbc:mysql://sql.freedb.tech/freedb_springbootAA";
     static final String USER = "freedb_alexaiguade";
     static final String PASS = "J@Dp$6nvsaGt?Uz";
