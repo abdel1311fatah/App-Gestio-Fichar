@@ -6,6 +6,14 @@
     android:padding="16dp">
 
     <EditText
+        android:id="@+id/editTextDni"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="DNI:"
+        android:inputType="text" />
+
+    <EditText
         android:id="@+id/editTextNombre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,5 +44,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Registrar" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="523dp"
+        android:text="Ficar tots els camps d' empleat al formulari, i enviar totes les dades a la firestore database, llavors utilitzar el gmail i la contra per a fer el login" />
+
+    <Button
+        android:id="@+id/mainBtn"
+        android:layout_width="match_parent"
+        android:layout_height="91dp"
+        android:layout_weight="1"
+        android:onClick="goToMain"
+        android:text="Tornar al menu principal" />
 
 </LinearLayout>

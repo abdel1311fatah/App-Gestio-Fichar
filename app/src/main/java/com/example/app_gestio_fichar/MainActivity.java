@@ -1,11 +1,9 @@
 package com.example.app_gestio_fichar;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -15,11 +13,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
+    public void goToCrud(View view) {
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void goToFilterById(View view) {
-
-        Intent intent = new Intent(this, ContadorHores.class);
+        Intent intent = new Intent(this, Crud.class);
         startActivity(intent);
 
     }

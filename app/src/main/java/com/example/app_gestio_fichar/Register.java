@@ -2,6 +2,7 @@ package com.example.app_gestio_fichar;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -30,24 +31,31 @@ public class Register extends AppCompatActivity {
 
         EditText editTextEmail = findViewById(R.id.editTextEmail);
         EditText editTextContrasena = findViewById(R.id.editTextContrasena);
+        EditText editTextDNI = findViewById(R.id.editTextDni);
+        EditText editTextNom = findViewById(R.id.editTextNombre);
+        EditText editTextCognom = findViewById(R.id.editTextApellido);
         Button buttonRegister = findViewById(R.id.buttonRegister);
 
         buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 String email = editTextEmail.getText().toString();
                 String password = editTextContrasena.getText().toString();
+                String name = editTextNom.getText().toString();
+                String surname = editTextCognom.getText().toString();
+                String nif = editTextDNI.getText().toString();
 
-                if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
-                    register(email, password);
+                if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(name) && !TextUtils.isEmpty(surname) && !TextUtils.isEmpty(nif)) {
+                    register(email, password, name, surname, nif);
                 } else {
-                    Toast.makeText(Register.this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Register.this, "Has d' omplir tots els camps", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
-    private void register(String email, String password) {
+    private void register(String email, String password, String name, String surname, String nif) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -55,14 +63,26 @@ public class Register extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            // Insertar aqui tots els camps del formulari a firestore i fer lo de contar hores
+
+//                            Intent intent = new Intent(this, Crud.class); // Ficar aqui el xml de contar hores
+//                            startActivity(intent);
+
                             Toast.makeText(Register.this, "T' has registrat correctament",
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(Register.this, "Fallo en la autenticación",
+                            Toast.makeText(Register.this, "No has pogut registrarte",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
+    public void goToMain(View view) {
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.example.app_gestio_fichar;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -16,6 +18,7 @@ public class Login extends AppCompatActivity {
     private EditText passwordField;
     private Button loginBtn;
     private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,13 +51,21 @@ public class Login extends AppCompatActivity {
                                 emailField.setText(user.getEmail());
                                 Toast.makeText(Login.this, "T' has loguejat correctament",
                                         Toast.LENGTH_SHORT).show();
+                                // Portar a la pagina per a fichar hores
                             }
                         } else {
-                            emailField.setText("No t' has pogut logejar");
+                            Toast.makeText(Login.this, "El correu o la contrasenya son incorrectes",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
-
         }
+    }
+
+    public void goToMain(View view) {
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
     }
 
 }

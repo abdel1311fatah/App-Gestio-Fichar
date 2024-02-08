@@ -88,7 +88,7 @@
         android:layout_marginTop="42dp"
         android:layout_marginEnd="161dp"
         android:layout_marginBottom="50dp"
-        android:onClick="goToFilterById"
+        android:onClick="goToCrud"
         android:text="Button"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
