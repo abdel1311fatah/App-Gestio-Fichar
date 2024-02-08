@@ -65,8 +65,8 @@ public class Register extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             // Insertar aqui tots els camps del formulari a firestore i fer lo de contar hores
 
-//                            Intent intent = new Intent(this, Crud.class); // Ficar aqui el xml de contar hores
-//                            startActivity(intent);
+                            Crud crud = new Crud();
+                            crud.save(nif,email,password,name,surname,"Professor",0); // Anyadir careregs a la logica
 
                             Toast.makeText(Register.this, "T' has registrat correctament",
                                     Toast.LENGTH_SHORT).show();

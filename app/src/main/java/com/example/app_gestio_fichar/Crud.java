@@ -23,6 +23,9 @@ public class Crud extends AppCompatActivity {
     private Button saveBtn;
     private FirebaseAuth mAuth;
 
+    String nif, email, password, name, surname, charge;
+    int workedHours;
+
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
@@ -43,20 +46,13 @@ public class Crud extends AppCompatActivity {
         }
 
         getBtn.setOnClickListener(v -> get());
-        saveBtn.setOnClickListener(v -> save());
+        saveBtn.setOnClickListener(v -> save(nif,  email, password, name, surname, charge, workedHours));
         deleteBtn.setOnClickListener(v -> delete());
     }
     public void get() {
 
     }
-    public void save() {
-        String nif = "valorNif"; // Aquí deberías obtener el valor del campo NIF
-        String email = emailField.getText().toString();
-        String password = "valorPassword"; // Aquí deberías obtener el valor del campo Password
-        String name = "valorName"; // Aquí deberías obtener el valor del campo Name
-        String surname = "valorSurname"; // Aquí deberías obtener el valor del campo Surname
-        String charge = "valorCharge"; // Aquí deberías obtener el valor del campo Charge
-        int workedHours = 0; // Valor inicial, puedes modificar según tus necesidades
+    public void save(String nif, String email, String password, String name, String surname, String charge, int workedHours) {
 
         // Crear un mapa con los datos que deseas almacenar
         Map<String, Object> empleado = new HashMap<>();
