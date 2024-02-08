@@ -16,6 +16,12 @@
         android:theme="@style/Theme.App_Gestio_Fichar"
         tools:targetApi="31">
         <activity
+            android:name=".Login"
+            android:exported="false" />
+        <activity
+            android:name=".Register"
+            android:exported="false" />
+        <activity
             android:name=".ContadorHores"
             android:exported="false" />
         <activity

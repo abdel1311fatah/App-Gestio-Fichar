@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "1066764682897",
-    "project_id": "ncahores",
-    "storage_bucket": "ncahores.appspot.com"
+    "project_number": "12884224070",
+    "project_id": "fitxatge-d--hores",
+    "storage_bucket": "fitxatge-d--hores.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1066764682897:android:a7be33e28b638eb34a6130",
+        "mobilesdk_app_id": "1:12884224070:android:e225e648684f120af9c247",
         "android_client_info": {
-          "package_name": "com.nca.hores"
+          "package_name": "com.example.app_gestio_fichar"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDu0EvO72mbXL51kgNzEkCwQUDVh4za3XA"
+          "current_key": "AIzaSyCo7_2qZ4C44hu7Wucgtn95znMGUZpqxtY"
         }
       ],
       "services": {
