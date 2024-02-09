@@ -47,7 +47,7 @@ public class Crud extends AppCompatActivity {
 
         getBtn.setOnClickListener(v -> get());
         saveBtn.setOnClickListener(v -> save(nif,  email, password, name, surname, charge, workedHours));
-        deleteBtn.setOnClickListener(v -> delete());
+        deleteBtn.setOnClickListener(v -> delete(emailField.getText().toString()));
     }
     public void get() {
 
@@ -76,7 +76,13 @@ public class Crud extends AppCompatActivity {
                 });
     }
 
-    public void delete() {
-
+    public void delete(String email) {
+        db.collection("Empleats").document(email).delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(Crud.this, "Has borrat l' empleat", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(Crud.this, "No s' ha pogut eliminar l' empleat" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }
