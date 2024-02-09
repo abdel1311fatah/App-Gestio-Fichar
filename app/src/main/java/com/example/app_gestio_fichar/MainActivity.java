@@ -31,5 +31,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
+    public void goToCount(View view) {
+
+        Intent intent = new Intent(this, Contador_Hores.class);
+        startActivity(intent);
+
+    }
 
 }

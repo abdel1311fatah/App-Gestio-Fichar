@@ -16,6 +16,9 @@
         android:theme="@style/Theme.App_Gestio_Fichar"
         tools:targetApi="31">
         <activity
+            android:name=".Contador_Hores"
+            android:exported="false" />
+        <activity
             android:name=".Crud"
             android:exported="false" />
         <activity

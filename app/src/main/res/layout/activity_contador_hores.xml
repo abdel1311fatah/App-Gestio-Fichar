@@ -4,52 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ContadorHores">
+    tools:context=".Contador_Hores">
 
-    <TextView
-        android:id="@+id/textViewId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="166dp"
-        android:layout_marginTop="442dp"
-        android:layout_marginEnd="187dp"
-        android:layout_marginBottom="270dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.672"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+    <LinearLayout
+        android:layout_width="409dp"
+        android:layout_height="201dp"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
 
-    <Button
-        android:id="@+id/filterByIdButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="159dp"
-        android:layout_marginTop="528dp"
-        android:layout_marginEnd="162dp"
-        android:layout_marginBottom="155dp"
-        android:onClick="search"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        <TextView
+            android:id="@+id/TextViewDNI"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/idForm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="95dp"
-        android:layout_marginTop="83dp"
-        android:layout_marginEnd="107dp"
-        android:layout_marginBottom="400dp"
-        android:ems="10"
-        android:inputType="numberSigned"
-        app:layout_constraintBottom_toTopOf="@+id/filterByIdButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/TextViewEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/countBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="contar"
+            android:text="Començar a contar" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

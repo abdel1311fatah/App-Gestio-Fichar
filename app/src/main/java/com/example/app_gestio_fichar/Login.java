@@ -48,10 +48,8 @@ public class Login extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
                             if (user != null) {
-                                emailField.setText(user.getEmail());
-                                Toast.makeText(Login.this, "T' has loguejat correctament",
-                                        Toast.LENGTH_SHORT).show();
-                                // Portar a la pagina per a fichar hores
+                                Intent intent = new Intent(this, Contador_Hores.class);
+                                startActivity(intent);
                             }
                         } else {
                             Toast.makeText(Login.this, "El correu o la contrasenya son incorrectes",

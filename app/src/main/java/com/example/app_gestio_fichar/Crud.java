@@ -54,7 +54,7 @@ public class Crud extends AppCompatActivity {
         saveBtn.setOnClickListener(v -> save(nif,  email, password, name, surname, charge, workedHours));
         deleteBtn.setOnClickListener(v -> delete(emailField.getText().toString()));
     }
-    public Task<HashMap<String, String>> get(String gmail) { // No deixa fer un metode hashmap directament per una cosa de FireStore
+    public Task<HashMap<String, String>> get(String gmail) {
         TaskCompletionSource<HashMap<String, String>> taskCompletionSource = new TaskCompletionSource<>();
 
         db.collection("Empleats").document(gmail).get()
@@ -80,22 +80,17 @@ public class Crud extends AppCompatActivity {
 
                         taskCompletionSource.setResult(empleat);
 
-                        result.setText(empleat.toString());
-
                     } else {
-                        // El documento no existe
-                        Toast.makeText(Crud.this, "No se encontraron datos para el email proporcionado", Toast.LENGTH_SHORT).show();
-                        taskCompletionSource.setException(new RuntimeException("No se encontraron datos"));
+                        taskCompletionSource.setException(new RuntimeException("No se encontraron datos para el email proporcionado"));
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // Error al intentar recuperar el documento
-                    Toast.makeText(Crud.this, "Error al obtener datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     taskCompletionSource.setException(e);
                 });
 
         return taskCompletionSource.getTask();
     }
+
 
     public void save(String nif, String email, String password, String name, String surname, String charge, int workedHours) {
 

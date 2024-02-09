@@ -37,6 +37,7 @@ public class Calculator { // classe per validar l horari
                 contador++;
             }
         }
+
         if (contador == 0) { // no hi ha feina entre aquesta franja horaria, per lo que es temps de descans
             return true;
         }else{
