@@ -1,4 +1,4 @@
-package com.example.app_gestio_fichar;
+package com.example.app_gestio_fichar.Hours;
 
 import android.os.Build;
 
@@ -23,33 +23,22 @@ public class Calculator { // classe per validar l horari
     }
 
     public boolean isHomeTime(int hour, int minute){ // tenint en compte que lasalle mollerussa obre a les 8 i tanque a les 21
-        if (hour < 8 || hour > 21) { // si la hora es abans de les 8 o despres de les 9 de la nit
+        if (hour <= 8 || hour >= 21) { // si la hora es abans de les o a les 8 o despres de les 9  o a les 9 de la nit
             return true;
         }else{
             return false;
         }
     }
 
-    public boolean isRestTime(String[] feina){ // si tots els dies de la setmana tens aquella parcela de temps buida, signifique que es hora de descans // per utilitzar fer un array de 5 amb una columna despres d haber passat totes les altres validacions
+    public boolean isRestTime(String[] x){ // si tots els dies de la setmana tens aquella parcela de temps buida, signifique que es hora de descans // per utilitzar fer un array de 5 amb una columna despres d haber passat totes les altres validacions
         int contador = 0;
-        for (int i = 0; i < feina.length; i++) { // feina es un string, ja sigui per que pot ser una x o el nom d' una assignatura o una tasca
-            if (feina[i].equals("X")) {
+        for (int i = 0; i < x.length; i++) { // feina es un string, ja sigui per que pot ser una x o el nom d' una assignatura o una tasca
+            if (x[i].equals("X")) {
                 contador++;
             }
         }
 
         if (contador == 0) { // no hi ha feina entre aquesta franja horaria, per lo que es temps de descans
-            return true;
-        }else{
-            return false;
-        }
-    }
-    public boolean itsNow (int hour, int minute){
-
-        int horaCSV = horaActual.getHour(); // Agafe la hora actual
-        int minutCSV = horaActual.getMinute(); // Agafe els minuts actuals
-
-        if (horaCSV == hour && minutCSV == minute) { // Si la hora i els minuts del CSV coincideixen amb la hora actual, es a dir, estem a una de les hores que marquen l' horari
             return true;
         }else{
             return false;
@@ -98,16 +87,4 @@ public class Calculator { // classe per validar l horari
         }
         return false;
     }
-
-    public int contadorHores(String horari) {
-        int horesEntrades = 0;
-
-        for (int i = 0; i < horari.length(); i++) {
-            if (horari.charAt(i) == 'X') {
-                horesEntrades++;
-            }
-        }
-        return horesEntrades;
-    }
-
 }
