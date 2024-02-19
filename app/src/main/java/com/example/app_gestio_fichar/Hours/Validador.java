@@ -1,89 +1,70 @@
 package com.example.app_gestio_fichar.Hours;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 
-@RequiresApi(api = Build.VERSION_CODES.O)
-public class Calculator { // classe per validar l horari
-    public Calculator () { // Constructor buit
+public class Validador { // clase para validar el horario
+    public Validador() { // Constructor vacío
+    }
+    ZoneId zonaHoraria = ZoneId.systemDefault(); // Obtengo la zona horaria del móvil
+
+    LocalDateTime horaActual = LocalDateTime.now(zonaHoraria); // Obtengo la hora actual de la zona horaria
+
+    public boolean isWeekend(int day) {
+        return (day == 6 || day == 7);
     }
 
-    ZoneId zonaHoraria = ZoneId.systemDefault(); // Agafe la zona horaria del mobil
-    LocalDateTime horaActual = LocalDateTime.now(zonaHoraria); // Agafe la hora actual de la zona horaria, al ser LocalDateTime ens donarie algo amb aquest format: 2019-01-31T12:30:45
-
-    public boolean isWeekend (int day) {
-        if (day == 6 || day == 7) {
-            return true;
-        }
-        return false;
+    public boolean isHomeTime(int hour) {
+        // Teniendo en cuenta que La Salle Mollerussa abre a las 8 y cierra a las 21
+        return ((hour <= 8) || hour >= 21);
     }
 
-    public boolean isHomeTime(int hour, int minute){ // tenint en compte que lasalle mollerussa obre a les 8 i tanque a les 21
-        if (hour <= 8 || hour >= 21) { // si la hora es abans de les o a les 8 o despres de les 9  o a les 9 de la nit
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    public boolean isRestTime(String[] x){ // si tots els dies de la setmana tens aquella parcela de temps buida, signifique que es hora de descans // per utilitzar fer un array de 5 amb una columna despres d haber passat totes les altres validacions
+    public boolean isRestTime(String[] x) {
+        // Si todos los días de la semana tienen esa franja horaria vacía, significa que es hora de descanso
         int contador = 0;
-        for (int i = 0; i < x.length; i++) { // feina es un string, ja sigui per que pot ser una x o el nom d' una assignatura o una tasca
-            if (x[i].equals("X")) {
+        for (String value : x) {
+            if (value.equals("X")) {
                 contador++;
             }
         }
 
-        if (contador == 0) { // no hi ha feina entre aquesta franja horaria, per lo que es temps de descans
-            return true;
-        }else{
-            return false;
-        }
+        return contador == 0; // No hay trabajo en esta franja horaria, así que es tiempo de descanso
     }
 
-    public boolean isHoliday (int day, int month) { // by copilot
-        if (month == 1 && day == 1) { // any nou
-            return true;
+    public boolean canviDeClasse(LocalTime hora){
+        LocalTime horaActual = LocalTime.now(zonaHoraria);
+        return horaActual.isAfter(hora.plusMinutes(50));
+    }
+
+    public boolean isHoliday(int day, int month) {
+        // Según el código proporcionado
+        if (month == 1 && day == 1) {
+            return true; // Año Nuevo
         }
-        if (month == 1 && day == 6) { // reis
-            return true;
+        if (month == 1 && day == 6) {
+            return true; // Reyes
         }
-//        if (month == 4 && day == 10) { // els que estan comentats poden no ser aquests dies ja que varia segons l any
-//            return true;
-//        }
-//        if (month == 4 && day == 13) {
-//            return true;
-//        }
-        if (month == 5 && day == 1) { // dia del treballador
-            return true;
+        if (month == 5 && day == 1) {
+            return true; // Día del Trabajador
         }
-//        if (month == 6 && day == 24) {
-//            return true;
-//        }
-        if (month == 8 && day == 15) { // Assumpcio de la Verge Maria
-            return true;
+        if (month == 8 && day == 15) {
+            return true; // Asunción de la Virgen María
         }
-//        if (month == 9 && day == 11) { // No se si varia el dia cada any
-//            return true;
-//        }
-        if (month == 10 && day == 12) { // hispanitat
-            return true;
+        if (month == 10 && day == 12) {
+            return true; // Hispanidad
         }
-        if (month == 11 && day == 1) { // tots sants
-            return true;
+        if (month == 11 && day == 1) {
+            return true; // Todos los Santos
         }
-        if (month == 12 && day == 6) { // Dia de la Constitucio
-            return true;
+        if (month == 12 && day == 6) {
+            return true; // Día de la Constitución
         }
-        if (month == 12 && day == 8) { // Inmaculada Concepcio
-            return true;
+        if (month == 12 && day == 8) {
+            return true; // Inmaculada Concepción
         }
-        if (month == 12 && day == 25) { // nadal
-            return true;
+        if (month == 12 && day == 25) {
+            return true; // Navidad
         }
         return false;
     }

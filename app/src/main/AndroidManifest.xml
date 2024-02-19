@@ -16,22 +16,17 @@
         android:theme="@style/Theme.App_Gestio_Fichar"
         tools:targetApi="31">
         <activity
-            android:name=".Contador_Hores"
+            android:name=".Hours.Contador_Hores"
             android:exported="false" />
+        <service android:name=".ContadorHorasService" />
         <activity
             android:name=".Crud"
             android:exported="false" />
         <activity
-            android:name=".Fitxatge_hores"
+            android:name=".Login_Register.Login"
             android:exported="false" />
         <activity
-            android:name=".Login"
-            android:exported="false" />
-        <activity
-            android:name=".Register"
-            android:exported="false" />
-        <activity
-            android:name=".ContadorHores"
+            android:name=".Login_Register.Register"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

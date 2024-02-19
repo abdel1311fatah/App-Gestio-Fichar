@@ -6,6 +6,10 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.app_gestio_fichar.Hours.Contador_Hores;
+import com.example.app_gestio_fichar.Login_Register.Login;
+import com.example.app_gestio_fichar.Login_Register.Register;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override

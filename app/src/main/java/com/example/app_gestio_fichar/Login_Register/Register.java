@@ -1,4 +1,4 @@
-package com.example.app_gestio_fichar;
+package com.example.app_gestio_fichar.Login_Register;
 
 import static android.content.ContentValues.TAG;
 
@@ -14,6 +14,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.app_gestio_fichar.Crud;
+import com.example.app_gestio_fichar.MainActivity;
+import com.example.app_gestio_fichar.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;

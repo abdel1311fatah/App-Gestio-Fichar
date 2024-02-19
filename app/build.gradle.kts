@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.app_gestio_fichar"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -35,12 +35,15 @@ android {
 dependencies {
 
     implementation("com.google.firebase:firebase-analytics")
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.firebase:firebase-auth")
-    implementation ("com.google.firebase:firebase-firestore:24.0.0")
+    implementation ("com.google.firebase:firebase-firestore:24.10.2")
+    implementation ("org.apache.poi:poi:5.2.0") // llibreria per passar de xlsx a csv
+    implementation ("org.apache.poi:poi-ooxml:5.2.0") // llibreria per passar de xlsx a csv
+    implementation ("com.opencsv:opencsv:5.5")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

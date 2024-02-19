@@ -1,4 +1,4 @@
-package com.example.app_gestio_fichar;
+package com.example.app_gestio_fichar.Login_Register;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.app_gestio_fichar.Hours.Contador_Hores;
+import com.example.app_gestio_fichar.MainActivity;
+import com.example.app_gestio_fichar.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -39,6 +42,7 @@ public class Login extends AppCompatActivity {
 
     public void login() {
         String email = emailField.getText().toString();
+        passwordField.setText("123456789");
         String password = passwordField.getText().toString();
 
         if (!email.isEmpty() && !password.isEmpty()) {
