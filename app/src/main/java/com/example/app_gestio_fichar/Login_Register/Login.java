@@ -70,7 +70,7 @@ public class Login extends AppCompatActivity {
 
     private void saveSelectedFilePath(String filePath) {
         // Puedes implementar lógica para guardar la ruta del archivo según tus necesidades
-        // Por ejemplo, almacenarlo en SharedPreferences, base de datos, etc.
+        // Por ejemplo, almacenarlo en SharedPreferences, base de datos, etc.a
     }
 
     public void login() {
