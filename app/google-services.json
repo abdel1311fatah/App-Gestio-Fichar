@@ -1,13 +1,23 @@
 {
   "project_info": {
+<<<<<<< HEAD
     "project_number": "12884224070",
     "project_id": "fitxatge-d--hores",
     "storage_bucket": "fitxatge-d--hores.appspot.com"
+=======
+    "project_number": "218052592185",
+    "project_id": "fitxarhores",
+    "storage_bucket": "fitxarhores.appspot.com"
+>>>>>>> 3b1bcaa3e59ab127bdb6c94caa445a77b0d21c2b
   },
   "client": [
     {
       "client_info": {
+<<<<<<< HEAD
         "mobilesdk_app_id": "1:12884224070:android:e225e648684f120af9c247",
+=======
+        "mobilesdk_app_id": "1:218052592185:android:eea4a1e971b9b9792643e8",
+>>>>>>> 3b1bcaa3e59ab127bdb6c94caa445a77b0d21c2b
         "android_client_info": {
           "package_name": "com.example.app_gestio_fichar"
         }
@@ -15,7 +25,11 @@
       "oauth_client": [],
       "api_key": [
         {
+<<<<<<< HEAD
           "current_key": "AIzaSyCo7_2qZ4C44hu7Wucgtn95znMGUZpqxtY"
+=======
+          "current_key": "AIzaSyC23f3JgVn8jKM6O8Js4EP_aE6-3fSHOv0"
+>>>>>>> 3b1bcaa3e59ab127bdb6c94caa445a77b0d21c2b
         }
       ],
       "services": {

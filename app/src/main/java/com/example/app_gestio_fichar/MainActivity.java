@@ -41,5 +41,12 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
+    public void goToLogin(View view) {
+
+        Intent intent = new Intent(this, login.class);
+        startActivity(intent);
+
+    }
+
 
 }

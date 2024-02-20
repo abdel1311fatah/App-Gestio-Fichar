@@ -19,6 +19,7 @@
         android:theme="@style/Theme.App_Gestio_Fichar"
         tools:targetApi="31">
         <activity
+<<<<<<< HEAD
             android:name=".Hours.Contador_Hores"
             android:exported="false" />
         <activity
@@ -29,6 +30,12 @@
             android:exported="false" />
         <activity
             android:name=".Login_Register.Register"
+=======
+            android:name=".login"
+            android:exported="false" />
+        <activity
+            android:name=".ContadorHores"
+>>>>>>> 3b1bcaa3e59ab127bdb6c94caa445a77b0d21c2b
             android:exported="false" />
         <activity
             android:name=".MainActivity"
