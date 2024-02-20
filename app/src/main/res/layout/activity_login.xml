@@ -7,11 +7,15 @@
     tools:context=".Login_Register.Login">
 
     <LinearLayout
-        android:layout_width="409dp"
-        android:layout_height="729dp"
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="32dp"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <EditText
             android:id="@+id/editTextTextEmailAddress"
@@ -29,28 +33,41 @@
             android:hint="Password"
             android:inputType="textPassword" />
 
-        <LinearLayout
+        <Button
+            android:id="@+id/loginBtn"
             android:layout_width="match_parent"
-            android:layout_height="729dp"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClick="login"
+            android:text="Login" />
 
-            <Button
-                android:id="@+id/loginBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="login"
-                android:text="Login" />
+        <Button
+            android:id="@+id/selectFileButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClick="openFilePicker"
+            android:text="Seleccionar Archivo" />
 
-            <Button
-                android:id="@+id/mainBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="goToMain"
-                android:text="Tornar al menu principal" />
+        <Button
+            android:id="@+id/mainBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClick="goToMain"
+            android:text="Tornar al menu principal" />
 
-        </LinearLayout>
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="veureRuta"
+            android:text="Veure ruta" />
 
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No seleccionar un excel de recientes" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

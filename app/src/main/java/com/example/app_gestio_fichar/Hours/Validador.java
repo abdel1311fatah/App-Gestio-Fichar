@@ -7,6 +7,7 @@ import java.time.ZoneId;
 public class Validador { // clase para validar el horario
     public Validador() { // Constructor vacío
     }
+
     ZoneId zonaHoraria = ZoneId.systemDefault(); // Obtengo la zona horaria del móvil
 
     LocalDateTime horaActual = LocalDateTime.now(zonaHoraria); // Obtengo la hora actual de la zona horaria
@@ -32,7 +33,7 @@ public class Validador { // clase para validar el horario
         return contador == 0; // No hay trabajo en esta franja horaria, así que es tiempo de descanso
     }
 
-    public boolean canviDeClasse(LocalTime hora){
+    public boolean canviDeClasse(LocalTime hora) {
         LocalTime horaActual = LocalTime.now(zonaHoraria);
         return horaActual.isAfter(hora.plusMinutes(50));
     }
@@ -68,4 +69,39 @@ public class Validador { // clase para validar el horario
         }
         return false;
     }
+
+    public boolean isWorkingTime(String[] dies, String[] hores, String[] x, int day, int hour, int minute) {
+        // Valida si es fin de semana
+        boolean isWeekend = isWeekend(day);
+        if (isWeekend) {
+            return false;
+        }
+
+        // Valida si es fuera del horario laboral
+        boolean isHomeTime = isHomeTime(hour);
+        if (isHomeTime) {
+            return false;
+        }
+
+        // Valida si es hora de descanso
+        boolean isRestTime = isRestTime(x);
+        if (isRestTime) {
+            return false;
+        }
+
+        // **Removed the previous line checking for holiday**
+
+        // Obtener la hora actual
+        LocalTime horaActual = LocalTime.now(zonaHoraria);
+
+        // Obtener la hora de inicio de la jornada laboral
+        LocalTime horaInicio = LocalTime.parse(hores[day - 1]);
+
+        // Obtener la hora de fin de la jornada laboral
+        LocalTime horaFin = LocalTime.parse(hores[day - 1].split("-")[1]);
+
+        // Si la hora actual está entre la hora de inicio y fin de la jornada laboral, y no es hora de descanso, es hora de trabajo
+        return horaActual.isAfter(horaInicio) && horaActual.isBefore(horaFin) && !isRestTime;
+    }
+
 }

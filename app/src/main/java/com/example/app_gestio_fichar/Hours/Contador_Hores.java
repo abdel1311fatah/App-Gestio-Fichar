@@ -19,12 +19,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -63,90 +61,108 @@ public class Contador_Hores extends AppCompatActivity {
         validador = new Validador();
         context = this;
 
-        copyAssetFileToInternalStorage("Horari.xlsx");
+        countBtn.setOnClickListener(v -> contar(v)); // Cleaner click handling
     }
 
     public void contar(View view) {
+
+        int actualDay = LocalDateTime.now().getDayOfWeek().getValue(); // el getValue es per que pase de dayOfWeek a int
+        int actualHour = LocalDateTime.now().getHour();
+        int actualMinute = LocalDateTime.now().getMinute();
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            textView4.setText("Pille el usuario");
-            db.collection("Empleats").document(currentUser.getEmail()).get().addOnSuccessListener(documentSnapshot -> {
-                try {
-                    if (documentSnapshot.exists()) {
-                        textView3.setText("Pille el usuario de la colección");
-                        HashMap<String, String> empleat = new HashMap<>();
-
-                        String nif = documentSnapshot.getString("nif");
-                        String email = documentSnapshot.getString("email");
-                        String password = documentSnapshot.getString("password");
-                        String name = documentSnapshot.getString("name");
-                        String surname = documentSnapshot.getString("surname");
-                        String charge = documentSnapshot.getString("charge");
-
-                        textViewEmail.setText(email);
-                        textViewNif.setText(nif);
-                        empleat.put("nif", nif);
-                        empleat.put("email", email);
-                        empleat.put("password", password);
-                        empleat.put("name", name);
-                        empleat.put("surname", surname);
-                        empleat.put("charge", charge);
-
-                        if (empleat.isEmpty()) {
-                            textView2.setText("empleat esta buit");
-                        } else if (empleat == null) {
-                            textView2.setText("empleat es null");
-                        } else {
-                            textView2.setText(empleat.toString());
-                        }
-
-                        String inputFileName = "Horari";
-                        File file = new File(context.getFilesDir(), inputFileName);
+            textView4.setText("Usuario obtenido");
+            db.collection("Empleats").document(currentUser.getEmail()).get()
+                    .addOnSuccessListener(documentSnapshot -> {
                         try {
-                            if (!file.exists()) {
-                                throw new FileNotFoundException("El archivo no existe: " + file.getAbsolutePath());
-                            }else{
-                                textViewEmail.setText("El arxiu existeix");
-                            }
+                            if (documentSnapshot.exists()) {
+                                textView3.setText("Usuario en la colección");
+                                HashMap<String, String> empleat = new HashMap<>();
 
-                            // Rest of the code to open and process the file
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                            Log.e("Contador_Hores", "Error: El archivo no existe");
-                            textView3.setText("Error: El archivo no existe");
+                                String nif = documentSnapshot.getString("nif");
+                                String email = documentSnapshot.getString("email");
+                                String password = documentSnapshot.getString("password");
+                                String name = documentSnapshot.getString("name");
+                                String surname = documentSnapshot.getString("surname");
+                                String charge = documentSnapshot.getString("charge");
+                                String filePath = documentSnapshot.getString("ruta_horari"); // Get route from Firestore
+
+                                textViewEmail.setText(email);
+                                textViewNif.setText(nif);
+                                empleat.put("nif", nif);
+                                empleat.put("email", email);
+                                empleat.put("password", password);
+                                empleat.put("name", name);
+                                empleat.put("surname", surname);
+                                empleat.put("charge", charge);
+                                empleat.put("ruta_horari", filePath);
+
+                                if (empleat.isEmpty()) {
+                                    textView2.setText("Empleado vacío");
+                                } else if (empleat == null) {
+                                    textView2.setText("Empleado nulo");
+                                } else {
+                                    textView2.setText(empleat.toString());
+
+                                    File file = new File(Objects.requireNonNull(empleat.get("ruta_horari")));
+                                    if (!file.exists()) {
+                                        throw new FileNotFoundException("El archivo no existe: " + file.getAbsolutePath());
+                                    } else {
+                                        textViewEmail.setText("El archivo existe");
+                                    }
+
+
+                                    //quiero recojer aqui los datos del csv
+
+                                    try {
+                                        String outputFileName = getFilesDir().getPath() + "/HorariOutput";
+                                        Info_horari horari = csvReader.get_info_horari(file.getAbsolutePath(), outputFileName);
+
+                                        if (horari != null) {
+                                            String[] dies = horari.getDies();
+                                            String[] hores = horari.getHores();
+                                            String[] x = horari.getX();
+
+                                            // Use the collected data to determine if it's working time
+                                            boolean isWorkingTime = validador.isWorkingTime(dies, hores, x, actualDay, actualHour, actualMinute);
+
+                                            if (isWorkingTime) {
+                                                // Start the timer to count hours
+                                                if (timer == null) {
+                                                    worked_hours.setText("0");
+                                                    timer = new Timer();
+                                                    timer.scheduleAtFixedRate(new TimerTask() {
+                                                        @Override
+                                                        public void run() {
+                                                            updateUI(documentSnapshot, 1);
+                                                        }
+                                                    }, 0, TimeUnit.HOURS.toMillis(1));
+
+                                                    countBtn.setEnabled(false);
+                                                }
+                                            } else {
+                                                textView3.setText("No es hora de trabajo según el horario");
+                                            }
+                                        } else {
+                                            textView3.setText("Error al obtener el horario");
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        Log.e("Contador_Hores", "Error al abrir y procesar el archivo: " + e.getMessage());
+                                        textView3.setText("Error al abrir y procesar el archivo");
+                                    }
+                                }
+                            } else {
+                                textView3.setText("No hay usuario en la colección");
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Log.e("Contador_Hores", "Error al abrir y procesar el archivo: " + e.getMessage());
-                            textView3.setText("Error al abrir y procesar el archivo");
+                            Log.e("Contador_Hores", "Error al obtener datos de Firebase", e);
                         }
-                        String outputFileName = getFilesDir().getPath() + "/HorariOutput";
-                        Info_horari horari = csvReader.get_info_horari(file.getAbsolutePath(), outputFileName);
-
-                        if (horari != null) {
-                            if (timer == null) {
-                                worked_hours.setText("0");  // Changed to String
-                                timer = new Timer();
-                                timer.scheduleAtFixedRate(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        updateUI(documentSnapshot, 1);
-                                    }
-                                }, 0, TimeUnit.HOURS.toMillis(1));
-
-                                countBtn.setEnabled(false);
-                            }
-                        } else {
-                            textView3.setText("Error al obtener el horario");
-                        }
-                    } else {
-                        textView3.setText("No hay usuario en la colección");
-                    }
-                } catch (Exception e) {
-                    Log.e("Contador_Hores", "Error al obtener datos de Firebase", e);
-                }
-            });
+                    });
         } else {
-            textView4.setText("No pille el usuario");
+            textView4.setText("No se ha obtenido el usuario");
         }
     }
 
@@ -161,60 +177,6 @@ public class Contador_Hores extends AppCompatActivity {
             Log.e("Contador_Hores", "Error al convertir 'worked_hours' a número", e);
         }
     }
-
-    private void copyAssetFileToInternalStorage(String fileName) {
-        try {
-            File file = new File(context.getFilesDir(), fileName);
-
-            if (!file.exists()) {
-                InputStream inputStream = context.getAssets().open(fileName);
-                FileOutputStream outputStream = new FileOutputStream(file);
-
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = inputStream.read(buffer)) > 0) {
-                    outputStream.write(buffer, 0, length);
-                }
-
-                outputStream.close();
-                inputStream.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("Contador_Hores", "Error al copiar el archivo desde assets: " + e.getMessage());
-            textView3.setText("Error al copiar el archivo desde assets");
-
-            // Si ocurre un error al copiar desde assets, intenta mover desde la ubicación predeterminada
-            try {
-                File destFile = new File(context.getFilesDir(), fileName);
-                File sourceFile = new File("app/src/main/assets/" + fileName);
-
-                if (sourceFile.exists() && sourceFile.isFile()) {
-                    InputStream inputStream = new FileInputStream(sourceFile);
-                    FileOutputStream outputStream = new FileOutputStream(destFile);
-
-                    byte[] buffer = new byte[1024];
-                    int length;
-                    while ((length = inputStream.read(buffer)) > 0) {
-                        outputStream.write(buffer, 0, length);
-                    }
-
-                    outputStream.close();
-                    inputStream.close();
-
-                    Log.i("Contador_Hores", "Archivo copiado desde la ubicación predeterminada.");
-                } else {
-                    Log.e("Contador_Hores", "Error: El archivo no existe en la ubicación predeterminada.");
-                    textView3.setText("Error: El archivo no existe en la ubicación predeterminada.");
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                Log.e("Contador_Hores", "Error al copiar el archivo desde la ubicación predeterminada: " + ex.getMessage());
-                textView3.setText("Error al copiar el archivo desde la ubicación predeterminada.");
-            }
-        }
-    }
-
 
     @Override
     protected void onDestroy() {

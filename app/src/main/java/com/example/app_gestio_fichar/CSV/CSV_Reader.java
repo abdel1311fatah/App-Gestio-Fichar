@@ -1,5 +1,7 @@
 package com.example.app_gestio_fichar.CSV;
 
+import android.util.Log;
+
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -60,12 +62,11 @@ public class CSV_Reader {
                 lines.add(String.join(",", line));
             }
         } catch (IOException | CsvValidationException e) {
-            e.printStackTrace();
+            Log.e("Contador_Hores", "Error al leer el archivo CSV", e);
         }
 
         return lines;
     }
-
     private Info_horari parsearCSV(List<String> csvLines) {
         System.out.println("Tamaño de csvLines: " + csvLines.size());
 
