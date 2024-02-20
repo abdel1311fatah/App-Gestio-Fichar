@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CSV_Reader {
@@ -28,21 +29,26 @@ public class CSV_Reader {
     }
 
     public Info_horari get_info_horari(String input, String output) {
-        XLSXtoCSVConverter.convertXLSXtoCSV(input + ".xlsx", output + ".csv");
-        File csv = new File(output + ".csv");
+        try {
+            XLSXtoCSVConverter.convertXLSXtoCSV(input + ".xlsx", output + ".csv");
+            File csv = new File(output + ".csv");
 
-        // Agrega el encabezado deseado al CSV
-        String header = "Hora,X";
-        XLSXtoCSVConverter.guardarCSV(leerCSV(csv), csv.getAbsolutePath(), header);
+            // Agrega el encabezado deseado al CSV
+            String header = "Hora,X";
+            XLSXtoCSVConverter.guardarCSV(leerCSV(csv), csv.getAbsolutePath(), header);
 
-        List<String> csvLines = leerCSV(csv);
+            List<String> csvLines = leerCSV(csv);
 
-        if (csvLines == null || csvLines.isEmpty()) {
-            System.out.println("Error: No se pudieron leer las líneas del archivo CSV.");
+            if (csvLines == null || csvLines.isEmpty()) {
+                System.out.println("Error: No se pudieron leer las líneas del archivo CSV.");
+                return null;
+            }
+
+            return parsearCSV(csvLines);
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
-
-        return parsearCSV(csvLines);
     }
 
     private List<String> leerCSV(File csv) {
@@ -53,22 +59,24 @@ public class CSV_Reader {
             while ((line = reader.readNext()) != null) {
                 lines.add(String.join(",", line));
             }
-        } catch (IOException e) {
+        } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
-        } catch (CsvValidationException e) {
-            throw new RuntimeException(e);
         }
 
         return lines;
     }
 
     private Info_horari parsearCSV(List<String> csvLines) {
+        System.out.println("Tamaño de csvLines: " + csvLines.size());
+
         if (csvLines.size() < 2) {
-            // El CSV debe tener al menos dos líneas (encabezado y al menos una línea de datos)
-            return null;
+            System.out.println("Error: No hay suficientes líneas en el archivo CSV.");
+            return new Info_horari(); // Devolver un objeto Info_horari vacío indicando el error
         }
 
         String[] headers = csvLines.get(0).split(",");
+        System.out.println("Headers: " + Arrays.toString(headers));
+
         String[] dies = new String[headers.length - 1];
         String[] hores = new String[headers.length - 1];
         String[] x = new String[headers.length - 1];
@@ -80,15 +88,17 @@ public class CSV_Reader {
         for (int i = 1; i < csvLines.size(); i++) {
             String[] values = csvLines.get(i).split(",");
             if (values.length >= 2) {
-                // Asegurarse de que haya al menos dos valores en cada línea (hora y "X")
                 hores[i - 1] = values[0];
                 x[i - 1] = values[1];
             } else {
-                // Manejar el caso donde no hay suficientes valores en una línea
-                // Puedes imprimir un mensaje de error o tomar la acción adecuada
                 System.out.println("Error: No hay suficientes valores en la línea " + i);
+                System.out.println("Valores encontrados: " + Arrays.toString(values));
             }
         }
+
+        System.out.println("dies: " + Arrays.toString(dies));
+        System.out.println("hores: " + Arrays.toString(hores));
+        System.out.println("x: " + Arrays.toString(x));
 
         return new Info_horari(dies, hores, x);
     }
