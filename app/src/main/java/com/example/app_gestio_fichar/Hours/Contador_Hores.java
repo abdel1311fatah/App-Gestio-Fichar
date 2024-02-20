@@ -101,7 +101,7 @@ public class Contador_Hores extends AppCompatActivity {
                         }
 
                         String inputFileName = "Horari";
-                        File file = new File(context.getFilesDir(), inputFileName);
+                        File file = new File("/storage/emulated/0/Download/Browser/Horari.xlsx");
                         try {
                             if (!file.exists()) {
                                 throw new FileNotFoundException("El archivo no existe: " + file.getAbsolutePath());
