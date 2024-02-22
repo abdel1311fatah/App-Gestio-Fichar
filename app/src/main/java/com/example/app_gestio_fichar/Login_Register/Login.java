@@ -21,13 +21,17 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class Login extends AppCompatActivity {
@@ -153,22 +157,59 @@ public class Login extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.e("Login", "Error al insertar la ruta del Excel en Firestore", e));
     }
 
+    //    private String llegirCSV() throws IOException {
+//        InputStream myInput;
+//        AssetManager assetManager = getAssets();
+//        myInput = assetManager.open("Horari.xlsx");
+//
+//        XSSFWorkbook myWorkBook = new XSSFWorkbook(myInput);
+//        XSSFSheet mySheet = myWorkBook.getSheetAt(0);
+//
+////        // Assuming you want to read the first row and first cell of the first sheet
+//        Row row = mySheet.getRow(3);
+//        String data = row.getCell(2).getStringCellValue();
+//
+//        myInput.close(); // Close the InputStream when you're done
+//
+//        return data;
+//    }
     private String llegirCSV() throws IOException {
-        InputStream myInput;
-        AssetManager assetManager = getAssets();
-        myInput = assetManager.open("Horari.xlsx");
+        InputStream myInput = null;
+        dades = ""; // Reinicia la variable dades
 
-        XSSFWorkbook myWorkBook = new XSSFWorkbook(myInput);
-        XSSFSheet mySheet = myWorkBook.getSheetAt(0);
+        try {
+            AssetManager assetManager = getAssets();
+            myInput = assetManager.open("Horari.xlsx");
 
-//        // Assuming you want to read the first row and first cell of the first sheet
-        Row row = mySheet.getRow(3);
-        String data = row.getCell(2).getStringCellValue();
+            XSSFWorkbook workbook = new XSSFWorkbook(myInput);  // Cambiado a XSSFWorkbook para archivos .xlsx
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.rowIterator();
 
-        myInput.close(); // Close the InputStream when you're done
+            while (rowIterator.hasNext()) {
+                XSSFRow row = (XSSFRow) rowIterator.next();  // Cambiado a XSSFRow para archivos .xlsx
+                Iterator<Cell> cellIterator = row.cellIterator();
 
-        return data;
+                while (cellIterator.hasNext()) {
+                    XSSFCell cell = (XSSFCell) cellIterator.next();  // Cambiado a XSSFCell para archivos .xlsx
+                    dades += cell.toString() + " ";
+                }
+                dades += "\n";
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (myInput != null) {
+                    myInput.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return dades;
     }
+
 
     private void goToMain() {
         Intent intent = new Intent(this, MainActivity.class);
