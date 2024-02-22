@@ -4,27 +4,17 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.app_gestio_fichar.CSV.CSV_Reader;
-import com.example.app_gestio_fichar.CSV.Info_horari;
 import com.example.app_gestio_fichar.R;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 public class Contador_Hores extends AppCompatActivity {
 
@@ -39,7 +29,6 @@ public class Contador_Hores extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private Timer timer;
     private Handler handler = new Handler();
-    private CSV_Reader csvReader;
     private Validador validador;
     private Context context;
 
@@ -56,11 +45,11 @@ public class Contador_Hores extends AppCompatActivity {
         textView3 = findViewById(R.id.textView3);
         textView4 = findViewById(R.id.textView4);
         mAuth = FirebaseAuth.getInstance();
-        csvReader = new CSV_Reader();
-        validador = new Validador();
-        context = this;
-
-        countBtn.setOnClickListener(v -> contar(v)); // Manejo de clics más limpio
+//        csvReader = new CSV_Reader();
+//        validador = new Validador();
+//        context = this;
+//
+//        countBtn.setOnClickListener(v -> contar(v)); // Manejo de clics más limpio
 
         String filePath = getIntent().getStringExtra("filePath");
         if (filePath != null) {
@@ -70,101 +59,101 @@ public class Contador_Hores extends AppCompatActivity {
         }
     }
 
-    public void contar(View view) {
-        int actualDay = LocalDateTime.now().getDayOfWeek().getValue(); // getValue es para pasar de dayOfWeek a int
-        int actualHour = LocalDateTime.now().getHour();
-        int actualMinute = LocalDateTime.now().getMinute();
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            textView4.setText("Usuario obtenido");
-            db.collection("Empleats").document(currentUser.getEmail()).get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        try {
-                            if (documentSnapshot.exists()) {
-                                textView3.setText("Usuario en la colección");
-                                HashMap<String, String> empleat = new HashMap<>();
-
-                                String nif = documentSnapshot.getString("nif");
-                                String email = documentSnapshot.getString("email");
-                                String password = documentSnapshot.getString("password");
-                                String name = documentSnapshot.getString("name");
-                                String surname = documentSnapshot.getString("surname");
-                                String charge = documentSnapshot.getString("charge");
-                                String filePath = documentSnapshot.getString("ruta_horari");
-
-                                textViewEmail.setText(email);
-                                textViewNif.setText(nif);
-                                empleat.put("nif", nif);
-                                empleat.put("email", email);
-                                empleat.put("password", password);
-                                empleat.put("name", name);
-                                empleat.put("surname", surname);
-                                empleat.put("charge", charge);
-                                empleat.put("ruta_horari", filePath);
-
-                                if (empleat.isEmpty()) {
-                                    textView2.setText("Empleado vacío");
-                                } else if (empleat == null) {
-                                    textView2.setText("Empleado nulo");
-                                } else {
-                                    textView2.setText(empleat.toString());
-
-                                    File file = new File(filePath);
-                                    if (!file.exists()) {
-                                        throw new FileNotFoundException("El archivo no existe: " + file.getAbsolutePath());
-                                    } else {
-                                        textViewEmail.setText("El archivo existe");
-                                    }
-
-                                    try {
-                                        String outputFileName = getFilesDir().getPath() + "/HorariOutput";
-                                        Info_horari horari = csvReader.get_info_horari(file.getAbsolutePath(), outputFileName);
-
-                                        if (horari != null) {
-                                            String[] dies = horari.getDies();
-                                            String[] hores = horari.getHores();
-                                            String[] x = horari.getX();
-
-                                            // Usar los datos recopilados para determinar si es la hora de trabajo
-                                            boolean isWorkingTime = validador.isWorkingTime(dies, hores, x, actualDay, actualHour, actualMinute);
-
-                                            if (isWorkingTime) {
-                                                // Iniciar el temporizador para contar las horas
-                                                if (timer == null) {
-                                                    worked_hours.setText("0");
-                                                    timer = new Timer();
-                                                    timer.scheduleAtFixedRate(new TimerTask() {
-                                                        @Override
-                                                        public void run() {
-                                                            updateUI(documentSnapshot, 1);
-                                                        }
-                                                    }, 0, TimeUnit.HOURS.toMillis(1));
-
-                                                    countBtn.setEnabled(false);
-                                                }
-                                            } else {
-                                                textView3.setText("No es hora de trabajo según el horario");
-                                            }
-                                        } else {
-                                            textView3.setText("Error al obtener el horario");
-                                        }
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                        Log.e("Contador_Hores", "Error al obtener datos de Firebase", e);
-                                    }
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.e("Contador_Hores", "Error al obtener datos de Firebase", e);
-                        }
-                    });
-        } else {
-            textView4.setText("No se ha obtenido el usuario");
-        }
-    }
+//    public void contar(View view) {
+//        int actualDay = LocalDateTime.now().getDayOfWeek().getValue(); // getValue es para pasar de dayOfWeek a int
+//        int actualHour = LocalDateTime.now().getHour();
+//        int actualMinute = LocalDateTime.now().getMinute();
+//
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+//        if (currentUser != null) {
+//            textView4.setText("Usuario obtenido");
+//            db.collection("Empleats").document(currentUser.getEmail()).get()
+//                    .addOnSuccessListener(documentSnapshot -> {
+//                        try {
+//                            if (documentSnapshot.exists()) {
+//                                textView3.setText("Usuario en la colección");
+//                                HashMap<String, String> empleat = new HashMap<>();
+//
+//                                String nif = documentSnapshot.getString("nif");
+//                                String email = documentSnapshot.getString("email");
+//                                String password = documentSnapshot.getString("password");
+//                                String name = documentSnapshot.getString("name");
+//                                String surname = documentSnapshot.getString("surname");
+//                                String charge = documentSnapshot.getString("charge");
+//                                String filePath = documentSnapshot.getString("ruta_horari");
+//
+//                                textViewEmail.setText(email);
+//                                textViewNif.setText(nif);
+//                                empleat.put("nif", nif);
+//                                empleat.put("email", email);
+//                                empleat.put("password", password);
+//                                empleat.put("name", name);
+//                                empleat.put("surname", surname);
+//                                empleat.put("charge", charge);
+//                                empleat.put("ruta_horari", filePath);
+//
+//                                if (empleat.isEmpty()) {
+//                                    textView2.setText("Empleado vacío");
+//                                } else if (empleat == null) {
+//                                    textView2.setText("Empleado nulo");
+//                                } else {
+//                                    textView2.setText(empleat.toString());
+//
+//                                    File file = new File(filePath);
+//                                    if (!file.exists()) {
+//                                        throw new FileNotFoundException("El archivo no existe: " + file.getAbsolutePath());
+//                                    } else {
+//                                        textViewEmail.setText("El archivo existe");
+//                                    }
+//
+//                                    try {
+//                                        String outputFileName = getFilesDir().getPath() + "/HorariOutput";
+//                                        Info_horari horari = csvReader.get_info_horari(file.getAbsolutePath(), outputFileName);
+//
+//                                        if (horari != null) {
+//                                            String[] dies = horari.getDies();
+//                                            String[] hores = horari.getHores();
+//                                            String[] x = horari.getX();
+//
+//                                            // Usar los datos recopilados para determinar si es la hora de trabajo
+//                                            boolean isWorkingTime = validador.isWorkingTime(dies, hores, x, actualDay, actualHour, actualMinute);
+//
+//                                            if (isWorkingTime) {
+//                                                // Iniciar el temporizador para contar las horas
+//                                                if (timer == null) {
+//                                                    worked_hours.setText("0");
+//                                                    timer = new Timer();
+//                                                    timer.scheduleAtFixedRate(new TimerTask() {
+//                                                        @Override
+//                                                        public void run() {
+//                                                            updateUI(documentSnapshot, 1);
+//                                                        }
+//                                                    }, 0, TimeUnit.HOURS.toMillis(1));
+//
+//                                                    countBtn.setEnabled(false);
+//                                                }
+//                                            } else {
+//                                                textView3.setText("No es hora de trabajo según el horario");
+//                                            }
+//                                        } else {
+//                                            textView3.setText("Error al obtener el horario");
+//                                        }
+//
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                        Log.e("Contador_Hores", "Error al obtener datos de Firebase", e);
+//                                    }
+//                                }
+//                            }
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            Log.e("Contador_Hores", "Error al obtener datos de Firebase", e);
+//                        }
+//                    });
+//        } else {
+//            textView4.setText("No se ha obtenido el usuario");
+//        }
+//    }
 
     private void updateUI(DocumentSnapshot documentSnapshot, long hoursToAdd) {
         try {

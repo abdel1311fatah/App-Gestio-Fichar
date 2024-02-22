@@ -1,21 +1,64 @@
 package com.example.app_gestio_fichar.CSV;
 
+import android.content.ContentResolver;
+import android.net.Uri;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Iterator;
 
 public class Info_horari {
     private String[] dies = new String[6]; // dies de la setmana
     private String[] hores; // fer el split de "-" per saber les 2 hores
     private String[] x = new String[6]; // dies de la setmana
-
     public Info_horari() {
     }
-
     public Info_horari(String[] dies, String[] hores, String[] x) {
         this.dies = dies;
         this.hores = hores;
         this.x = x;
     }
+    public String llegirCSV(Uri selectedFileUri, ContentResolver contentResolver) throws IOException {
+        InputStream myInput = contentResolver.openInputStream(selectedFileUri);
+        StringBuilder dades = new StringBuilder();
 
+        try {
+            XSSFWorkbook workbook = new XSSFWorkbook(myInput);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.rowIterator();
+
+            while (rowIterator.hasNext()) {
+                XSSFRow row = (XSSFRow) rowIterator.next();
+                Iterator<Cell> cellIterator = row.cellIterator();
+
+                while (cellIterator.hasNext()) {
+                    XSSFCell cell = (XSSFCell) cellIterator.next();
+                    dades.append(cell.toString()).append(" ");
+                }
+                dades.append("\n");
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (myInput != null) {
+                    myInput.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return dades.toString();
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

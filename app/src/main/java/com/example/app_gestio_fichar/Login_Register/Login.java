@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.app_gestio_fichar.CSV.Info_horari;
 import com.example.app_gestio_fichar.Hours.Contador_Hores;
 import com.example.app_gestio_fichar.MainActivity;
 import com.example.app_gestio_fichar.R;
@@ -20,23 +21,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 public class Login extends AppCompatActivity {
 
     private static final int PICK_FILE_REQUEST_CODE = 1;
-    private String dades;
     private EditText emailField;
     private EditText passwordField;
     private TextView textView5;
@@ -88,15 +78,8 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private void veureRuta(View view) throws IOException {
-//        if (selectedFileUri != null) {
-        textView5.setText(/*"Ruta del archivo: " + selectedFileUri.getPath() + "\n" + */ llegirCSV());
-//        } else {
-//            textView5.setText("Ningún archivo seleccionado");
-//        }
-    }
-
     private void login() {
+        emailField.setText("abdel13fatah@gmail.com");
         String email = emailField.getText().toString();
         passwordField.setText("123456789");
         String password = passwordField.getText().toString();
@@ -110,7 +93,7 @@ public class Login extends AppCompatActivity {
                                 checkAndUpdateRutaHorari(user.getEmail());
                             }
                         } else {
-                            Toast.makeText(Login.this, "El correo o la contraseña son incorrectos",
+                            Toast.makeText(Login.this, "El correu o la contrasenya son incorrectes",
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -122,15 +105,40 @@ public class Login extends AppCompatActivity {
 
         userDocRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
-                String rutaHorari = documentSnapshot.getString("ruta_horari");
-
+                String rutaHorari = documentSnapshot.getString("ruta_horari"); // ruta d excel guardada a la db
                 if (rutaHorari == null || rutaHorari.isEmpty()) {
                     if (selectedFileUri != null) {
                         String filePath = selectedFileUri.getPath();
                         if (filePath != null) {
-                            insertRutaHorariInFirestore(userEmail, filePath);
+                            //Inserte la ruta al empleat
+                            HashMap<String, String> empleat = new HashMap<>(); // agafem tots els camps per a que no es borrin
+
+                            String nif = documentSnapshot.getString("nif");
+                            String email = documentSnapshot.getString("email");
+                            String password = documentSnapshot.getString("password");
+                            String name = documentSnapshot.getString("name");
+                            String surname = documentSnapshot.getString("surname");
+                            String charge = documentSnapshot.getString("charge");
+                            long workedHours = documentSnapshot.getLong("worked_hours");
+                            String ruta_horari = filePath;
+
+                            empleat.put("nif", nif);
+                            empleat.put("email", email);
+                            empleat.put("password", password);
+                            empleat.put("name", name);
+                            empleat.put("surname", surname);
+                            empleat.put("charge", charge);
+                            empleat.put("worked_hours", String.valueOf(workedHours));
+                            empleat.put("ruta_horari", ruta_horari);
+
+                            db.collection("Empleats").document(userEmail)
+                                    .set(empleat)
+                                    .addOnSuccessListener(aVoid -> Log.d("Login", "Ruta del Excel insertada en Firestore"))
+                                    .addOnFailureListener(e -> Log.e("Login", "Error al insertar la ruta del Excel en Firestore", e));
+
                             Intent intent = new Intent(this, Contador_Hores.class);
                             startActivity(intent);
+
                         } else {
                             Toast.makeText(Login.this, "Error al obtener la ruta del archivo", Toast.LENGTH_SHORT).show();
                         }
@@ -146,67 +154,15 @@ public class Login extends AppCompatActivity {
                 "Error al verificar la ruta del Excel en Firestore", Toast.LENGTH_SHORT).show());
     }
 
-    private void insertRutaHorariInFirestore(String email, String rutaHorari) {
-        Map<String, Object> data = new HashMap<>();
-        data.put("ruta_horari", rutaHorari);
-
-        db.collection("Empleats").document(email)
-                .set(data)
-                .addOnSuccessListener(aVoid -> Log.d("Login", "Ruta del Excel insertada en Firestore"))
-                .addOnFailureListener(e -> Log.e("Login", "Error al insertar la ruta del Excel en Firestore", e));
-    }
-
-    //    private String llegirCSV() throws IOException {
-//        InputStream myInput;
-//        AssetManager assetManager = getAssets();
-//        myInput = assetManager.open("Horari.xlsx");
-//
-//        XSSFWorkbook myWorkBook = new XSSFWorkbook(myInput);
-//        XSSFSheet mySheet = myWorkBook.getSheetAt(0);
-//
-////        // Assuming you want to read the first row and first cell of the first sheet
-//        Row row = mySheet.getRow(3);
-//        String data = row.getCell(2).getStringCellValue();
-//
-//        myInput.close(); // Close the InputStream when you're done
-//
-//        return data;
-//    }
-    private String llegirCSV() throws IOException {
-        InputStream myInput = getContentResolver().openInputStream(selectedFileUri);
-        dades = ""; // Reinicia la variable dades
-
-        try {
-
-            XSSFWorkbook workbook = new XSSFWorkbook(myInput);  // Cambiado a XSSFWorkbook para archivos .xlsx
-            XSSFSheet sheet = workbook.getSheetAt(0);
-            Iterator<Row> rowIterator = sheet.rowIterator();
-
-            while (rowIterator.hasNext()) {
-                XSSFRow row = (XSSFRow) rowIterator.next();  // Cambiado a XSSFRow para archivos .xlsx
-                Iterator<Cell> cellIterator = row.cellIterator();
-
-                while (cellIterator.hasNext()) {
-                    XSSFCell cell = (XSSFCell) cellIterator.next();  // Cambiado a XSSFCell para archivos .xlsx
-                    dades += cell.toString() + " ";
-                }
-                dades += "\n";
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                if (myInput != null) {
-                    myInput.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    private void veureRuta(View view) throws IOException {
+        if (selectedFileUri != null) { // que hagui seleccionat un arxiu
+            Info_horari infoHorari = new Info_horari();
+            String contingutCSV = infoHorari.llegirCSV(selectedFileUri, getContentResolver());
+            textView5.setText("Ruta: " + selectedFileUri.getPath() + "\n" + "Contingut: " + "\n" + contingutCSV);
+        } else {
+            textView5.setText("Has de seleccionar un arxiu");
         }
-        return dades;
     }
-
     private void goToMain() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
