@@ -1,7 +1,6 @@
 package com.example.app_gestio_fichar.Login_Register;
 
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -174,12 +173,10 @@ public class Login extends AppCompatActivity {
 //        return data;
 //    }
     private String llegirCSV() throws IOException {
-        InputStream myInput = null;
+        InputStream myInput = getContentResolver().openInputStream(selectedFileUri);
         dades = ""; // Reinicia la variable dades
 
         try {
-            AssetManager assetManager = getAssets();
-            myInput = assetManager.open("Horari.xlsx");
 
             XSSFWorkbook workbook = new XSSFWorkbook(myInput);  // Cambiado a XSSFWorkbook para archivos .xlsx
             XSSFSheet sheet = workbook.getSheetAt(0);
@@ -209,7 +206,6 @@ public class Login extends AppCompatActivity {
         }
         return dades;
     }
-
 
     private void goToMain() {
         Intent intent = new Intent(this, MainActivity.class);
