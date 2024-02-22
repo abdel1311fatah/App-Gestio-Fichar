@@ -22,6 +22,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 public class Login extends AppCompatActivity {
@@ -157,8 +158,8 @@ public class Login extends AppCompatActivity {
     private void veureRuta(View view) throws IOException {
         if (selectedFileUri != null) { // que hagui seleccionat un arxiu
             Info_horari infoHorari = new Info_horari();
-            String contingutCSV = infoHorari.llegirCSV(selectedFileUri, getContentResolver());
-            textView5.setText("Ruta: " + selectedFileUri.getPath() + "\n" + "Contingut: " + "\n" + contingutCSV);
+            Info_horari horari = infoHorari.llegirCSV(selectedFileUri, getContentResolver(),LocalDateTime.now());
+            textView5.setText("Ruta: " + selectedFileUri.getPath() + "\n" + "Contingut: " + "\n" + horari.getDia() + " hores: " + horari.getHores().toString() + " x: " + horari.getX().toString());
         } else {
             textView5.setText("Has de seleccionar un arxiu");
         }
