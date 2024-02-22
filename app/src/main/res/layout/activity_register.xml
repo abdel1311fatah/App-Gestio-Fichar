@@ -39,22 +39,39 @@
         android:hint="Contraseña"
         android:inputType="textPassword" />
 
+    <EditText
+        android:id="@+id/editTextCharge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Cargo"
+        android:inputType="text" />
+
     <Button
         android:id="@+id/buttonRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Registrar" />
 
-    <TextView
-        android:id="@+id/textView"
+    <Button
+        android:id="@+id/selectFileButton"
         android:layout_width="match_parent"
-        android:layout_height="523dp"
-        android:text="Ficar tots els camps d' empleat al formulari, i enviar totes les dades a la firestore database, llavors utilitzar el gmail i la contra per a fer el login" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:onClick="openFilePicker"
+        android:text="Seleccionar Archivo" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="veureRuta"
+        android:text="Veure ruta" />
 
     <Button
         android:id="@+id/mainBtn"
         android:layout_width="match_parent"
-        android:layout_height="91dp"
+        android:layout_height="67dp"
         android:layout_weight="1"
         android:onClick="goToMain"
         android:text="Tornar al menu principal" />

@@ -1,11 +1,13 @@
 package com.example.app_gestio_fichar.Login_Register;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -19,19 +21,23 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Login extends AppCompatActivity {
 
     private static final int PICK_FILE_REQUEST_CODE = 1;
-
+    private String dades;
     private EditText emailField;
     private EditText passwordField;
-    private Button loginBtn;
-    private Button d;
-    private Button selectFileButton;
-    private String selectedFilePath;
+    private TextView textView5;
+    private Uri selectedFileUri;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -42,9 +48,7 @@ public class Login extends AppCompatActivity {
 
         emailField = findViewById(R.id.editTextTextEmailAddress);
         passwordField = findViewById(R.id.editTextTextPassword);
-        loginBtn = findViewById(R.id.loginBtn);
-        selectFileButton = findViewById(R.id.selectFileButton);
-        d = findViewById(R.id.button);
+        textView5 = findViewById(R.id.textView5);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -52,8 +56,16 @@ public class Login extends AppCompatActivity {
             emailField.setText(currentUser.getEmail());
         }
 
-        loginBtn.setOnClickListener(v -> login());
-        selectFileButton.setOnClickListener(v -> openFilePicker());
+        findViewById(R.id.loginBtn).setOnClickListener(v -> login());
+        findViewById(R.id.selectFileButton).setOnClickListener(v -> openFilePicker());
+        findViewById(R.id.mainBtn).setOnClickListener(v -> goToMain());
+        findViewById(R.id.button).setOnClickListener(v -> {
+            try {
+                veureRuta(v);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     private void openFilePicker() {
@@ -67,12 +79,42 @@ public class Login extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            selectedFilePath = data.getData().getPath();
+            selectedFileUri = data.getData();
+            String selectedFilePath = selectedFileUri.getPath();
             Toast.makeText(this, "Archivo seleccionado: " + selectedFilePath, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void saveSelectedFilePath(String userEmail, String filePath) {
+    private void veureRuta(View view) throws IOException {
+//        if (selectedFileUri != null) {
+        textView5.setText(/*"Ruta del archivo: " + selectedFileUri.getPath() + "\n" + */ llegirCSV());
+//        } else {
+//            textView5.setText("Ningún archivo seleccionado");
+//        }
+    }
+
+    private void login() {
+        String email = emailField.getText().toString();
+        passwordField.setText("123456789");
+        String password = passwordField.getText().toString();
+
+        if (!email.isEmpty() && !password.isEmpty()) {
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null) {
+                                checkAndUpdateRutaHorari(user.getEmail());
+                            }
+                        } else {
+                            Toast.makeText(Login.this, "El correo o la contraseña son incorrectos",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+    }
+
+    private void checkAndUpdateRutaHorari(String userEmail) {
         DocumentReference userDocRef = db.collection("Empleats").document(userEmail);
 
         userDocRef.get().addOnSuccessListener(documentSnapshot -> {
@@ -80,22 +122,25 @@ public class Login extends AppCompatActivity {
                 String rutaHorari = documentSnapshot.getString("ruta_horari");
 
                 if (rutaHorari == null || rutaHorari.isEmpty()) {
-                    // La ruta no existe en Firestore, la insertamos
-                    insertRutaHorariInFirestore(userEmail, filePath);
+                    if (selectedFileUri != null) {
+                        String filePath = selectedFileUri.getPath();
+                        if (filePath != null) {
+                            insertRutaHorariInFirestore(userEmail, filePath);
+                            Intent intent = new Intent(this, Contador_Hores.class);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(Login.this, "Error al obtener la ruta del archivo", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(Login.this, "Ningún archivo seleccionado", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    // La ruta ya existe, la actualizamos
-                    updateRutaHorariInFirestore(userEmail, filePath);
+                    Intent intent = new Intent(this, Contador_Hores.class);
+                    startActivity(intent);
                 }
             }
         }).addOnFailureListener(e -> Toast.makeText(Login.this,
                 "Error al verificar la ruta del Excel en Firestore", Toast.LENGTH_SHORT).show());
-    }
-
-    private void updateRutaHorariInFirestore(String email, String rutaHorari) {
-        db.collection("Empleats").document(email)
-                .update("ruta_horari", rutaHorari)
-                .addOnSuccessListener(aVoid -> Log.d("Login", "Ruta del Excel actualizada en Firestore"))
-                .addOnFailureListener(e -> Log.e("Login", "Error al actualizar la ruta del Excel en Firestore", e));
     }
 
     private void insertRutaHorariInFirestore(String email, String rutaHorari) {
@@ -108,40 +153,25 @@ public class Login extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.e("Login", "Error al insertar la ruta del Excel en Firestore", e));
     }
 
-    public void login() {
-        String email = emailField.getText().toString();
-        passwordField.setText("123456789"); // Use a more secure placeholder password
-        String password = passwordField.getText().toString();
+    private String llegirCSV() throws IOException {
+        InputStream myInput;
+        AssetManager assetManager = getAssets();
+        myInput = assetManager.open("Horari.xlsx");
 
-        if (!email.isEmpty() && !password.isEmpty()) {
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, task -> {
-                        if (task.isSuccessful()) {
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            if (user != null) {
-                                // Verify if the Excel path already exists in Firestore
-                                saveSelectedFilePath(user.getEmail(), selectedFilePath); // Pass filePath instead of URI
+        XSSFWorkbook myWorkBook = new XSSFWorkbook(myInput);
+        XSSFSheet mySheet = myWorkBook.getSheetAt(0);
 
-                                Intent intent = new Intent(this, Contador_Hores.class);
-                                startActivity(intent);
-                            }
-                        } else {
-                            Toast.makeText(Login.this, "El correo o la contraseña son incorrectos",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
+//        // Assuming you want to read the first row and first cell of the first sheet
+        Row row = mySheet.getRow(3);
+        String data = row.getCell(2).getStringCellValue();
+
+        myInput.close(); // Close the InputStream when you're done
+
+        return data;
     }
 
-    public void goToMain(View view) {
-
+    private void goToMain() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-
     }
-
-    public void veureRuta(View view){
-        d.setText(selectedFilePath);
-    }
-
 }

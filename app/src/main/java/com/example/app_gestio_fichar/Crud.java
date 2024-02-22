@@ -27,7 +27,7 @@ public class Crud extends AppCompatActivity {
     private Button saveBtn;
     private FirebaseAuth mAuth;
 
-    String nif, email, password, name, surname, charge;
+    String nif, email, password, name, surname, charge, ruta_horari;
     int workedHours;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -51,7 +51,7 @@ public class Crud extends AppCompatActivity {
         }
 
         getBtn.setOnClickListener(v -> get(emailField.getText().toString()));
-        saveBtn.setOnClickListener(v -> save(nif,  email, password, name, surname, charge, workedHours));
+        saveBtn.setOnClickListener(v -> save(nif,  email, password, name, surname, charge, workedHours, ruta_horari));
         deleteBtn.setOnClickListener(v -> delete(emailField.getText().toString()));
     }
     public Task<HashMap<String, String>> get(String gmail) {
@@ -69,6 +69,7 @@ public class Crud extends AppCompatActivity {
                         String surname = documentSnapshot.getString("surname");
                         String charge = documentSnapshot.getString("charge");
                         long workedHours = documentSnapshot.getLong("worked_hours");
+                        String ruta_horari = documentSnapshot.getString("ruta_horari");
 
                         empleat.put("nif", nif);
                         empleat.put("email", email);
@@ -77,6 +78,7 @@ public class Crud extends AppCompatActivity {
                         empleat.put("surname", surname);
                         empleat.put("charge", charge);
                         empleat.put("worked_hours", String.valueOf(workedHours));
+                        empleat.put("ruta_horari", ruta_horari);
 
                         taskCompletionSource.setResult(empleat);
 
@@ -92,7 +94,7 @@ public class Crud extends AppCompatActivity {
     }
 
 
-    public void save(String nif, String email, String password, String name, String surname, String charge, int workedHours) {
+    public void save(String nif, String email, String password, String name, String surname, String charge, int workedHours, String ruta_horari) {
 
         // Crear un mapa con los datos que deseas almacenar
         Map<String, Object> empleado = new HashMap<>();
@@ -103,6 +105,7 @@ public class Crud extends AppCompatActivity {
         empleado.put("surname", surname);
         empleado.put("charge", charge);
         empleado.put("worked_hours", workedHours);
+        empleado.put("ruta_horari", ruta_horari);
 
         // Agregar el documento a la colección "Empleats" con el correo electrónico como identificador único
         db.collection("Empleats").document(email).set(empleado)

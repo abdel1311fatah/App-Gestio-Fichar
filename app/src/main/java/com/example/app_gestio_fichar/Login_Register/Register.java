@@ -3,6 +3,7 @@ package com.example.app_gestio_fichar.Login_Register;
 import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -25,6 +26,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class Register extends AppCompatActivity {
     private FirebaseAuth mAuth;
+    private Button selectFileButton;
+    private Uri selectedFileUri;
+
+    private static final int PICK_FILE_REQUEST_CODE = 1;
+    private Button d;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +76,7 @@ public class Register extends AppCompatActivity {
                             // Insertar aqui tots els camps del formulari a firestore i fer lo de contar hores
 
                             Crud crud = new Crud();
-                            crud.save(nif,email,password,name,surname,"Professor",0); // Anyadir careregs a la logica
+//                            crud.save(nif,email,password,name,surname,"Professor",0); // Anyadir careregs a la logica
 
                             Toast.makeText(Register.this, "T' has registrat correctament",
                                     Toast.LENGTH_SHORT).show();

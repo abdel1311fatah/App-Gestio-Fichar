@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -61,12 +60,18 @@ public class Contador_Hores extends AppCompatActivity {
         validador = new Validador();
         context = this;
 
-        countBtn.setOnClickListener(v -> contar(v)); // Cleaner click handling
+        countBtn.setOnClickListener(v -> contar(v)); // Manejo de clics más limpio
+
+        String filePath = getIntent().getStringExtra("filePath");
+        if (filePath != null) {
+            textView3.setText("Ruta del archivo recibida");
+        } else {
+            textView3.setText("No se ha recibido la ruta del archivo");
+        }
     }
 
     public void contar(View view) {
-
-        int actualDay = LocalDateTime.now().getDayOfWeek().getValue(); // el getValue es per que pase de dayOfWeek a int
+        int actualDay = LocalDateTime.now().getDayOfWeek().getValue(); // getValue es para pasar de dayOfWeek a int
         int actualHour = LocalDateTime.now().getHour();
         int actualMinute = LocalDateTime.now().getMinute();
 
@@ -86,7 +91,7 @@ public class Contador_Hores extends AppCompatActivity {
                                 String name = documentSnapshot.getString("name");
                                 String surname = documentSnapshot.getString("surname");
                                 String charge = documentSnapshot.getString("charge");
-                                String filePath = documentSnapshot.getString("ruta_horari"); // Get route from Firestore
+                                String filePath = documentSnapshot.getString("ruta_horari");
 
                                 textViewEmail.setText(email);
                                 textViewNif.setText(nif);
@@ -105,15 +110,12 @@ public class Contador_Hores extends AppCompatActivity {
                                 } else {
                                     textView2.setText(empleat.toString());
 
-                                    File file = new File(Objects.requireNonNull(empleat.get("ruta_horari")));
+                                    File file = new File(filePath);
                                     if (!file.exists()) {
                                         throw new FileNotFoundException("El archivo no existe: " + file.getAbsolutePath());
                                     } else {
                                         textViewEmail.setText("El archivo existe");
                                     }
-
-
-                                    //quiero recojer aqui los datos del csv
 
                                     try {
                                         String outputFileName = getFilesDir().getPath() + "/HorariOutput";
@@ -124,11 +126,11 @@ public class Contador_Hores extends AppCompatActivity {
                                             String[] hores = horari.getHores();
                                             String[] x = horari.getX();
 
-                                            // Use the collected data to determine if it's working time
+                                            // Usar los datos recopilados para determinar si es la hora de trabajo
                                             boolean isWorkingTime = validador.isWorkingTime(dies, hores, x, actualDay, actualHour, actualMinute);
 
                                             if (isWorkingTime) {
-                                                // Start the timer to count hours
+                                                // Iniciar el temporizador para contar las horas
                                                 if (timer == null) {
                                                     worked_hours.setText("0");
                                                     timer = new Timer();
@@ -147,14 +149,12 @@ public class Contador_Hores extends AppCompatActivity {
                                         } else {
                                             textView3.setText("Error al obtener el horario");
                                         }
+
                                     } catch (Exception e) {
                                         e.printStackTrace();
-                                        Log.e("Contador_Hores", "Error al abrir y procesar el archivo: " + e.getMessage());
-                                        textView3.setText("Error al abrir y procesar el archivo");
+                                        Log.e("Contador_Hores", "Error al obtener datos de Firebase", e);
                                     }
                                 }
-                            } else {
-                                textView3.setText("No hay usuario en la colección");
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -171,7 +171,7 @@ public class Contador_Hores extends AppCompatActivity {
             String workedHoursString = documentSnapshot.getString("worked_hours");
             long workedhours = Long.parseLong(workedHoursString);
             workedhours += hoursToAdd;
-            final String finalWorkedHours = String.valueOf(workedhours);  // Changed to String
+            final String finalWorkedHours = String.valueOf(workedhours);  // Cambiado a String
             handler.post(() -> worked_hours.setText(finalWorkedHours));
         } catch (NumberFormatException e) {
             Log.e("Contador_Hores", "Error al convertir 'worked_hours' a número", e);
