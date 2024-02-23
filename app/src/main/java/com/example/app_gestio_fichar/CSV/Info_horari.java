@@ -42,7 +42,7 @@ public class Info_horari {
         ArrayList<String> dies = new ArrayList<>(); // guadre els dies del excel, a lo millor el excel te 4 dies, pos llavors n agafarie 4
         boolean primeraFila = true; // s' enten que la primera fila es on van els dies
 
-        try {
+        try { // aqui nomes agafe el contingut del excel
             XSSFWorkbook workbook = new XSSFWorkbook(myInput);
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.rowIterator();
@@ -59,10 +59,11 @@ public class Info_horari {
                             primeraFila = false; // ja no ha de llegir la fila dels dies de la setmana per que ja ha trobat el dia equivalent a avui
                             if(cell.getColumnIndex() == 0){ // es la part on fique per exemple: 10:10-11:00
                                 horari.getHores().add(cell.toString());
+
                             } else if(cell.getColumnIndex() == 1){ // es la part on fique per exemple: X
                                 horari.getX().add(cell.toString());
                             }
-                        }
+                    }
                         dades.append(cell.toString()).append(" "); // agafe el contingut de la cela
                         numeroDia++; // al acabar el while acabe la fila, per lo que resetejem el contador
                     }
@@ -83,7 +84,6 @@ public class Info_horari {
         }
         return horari;
     }
-
     public int getDia() {
         return dia;
     }

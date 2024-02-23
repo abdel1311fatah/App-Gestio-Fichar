@@ -102,8 +102,8 @@ public class Login extends AppCompatActivity {
     }
 
     private void checkAndUpdateRutaHorari(String userEmail) {
-        DocumentReference userDocRef = db.collection("Empleats").document(userEmail);
 
+        DocumentReference userDocRef = db.collection("Empleats").document(userEmail);
         userDocRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 String rutaHorari = documentSnapshot.getString("ruta_horari"); // ruta d excel guardada a la db
@@ -121,7 +121,6 @@ public class Login extends AppCompatActivity {
                             String surname = documentSnapshot.getString("surname");
                             String charge = documentSnapshot.getString("charge");
                             long workedHours = documentSnapshot.getLong("worked_hours");
-                            String ruta_horari = filePath;
 
                             empleat.put("nif", nif);
                             empleat.put("email", email);
@@ -130,7 +129,7 @@ public class Login extends AppCompatActivity {
                             empleat.put("surname", surname);
                             empleat.put("charge", charge);
                             empleat.put("worked_hours", String.valueOf(workedHours));
-                            empleat.put("ruta_horari", ruta_horari);
+                            empleat.put("ruta_horari", filePath);
 
                             db.collection("Empleats").document(userEmail)
                                     .set(empleat)
@@ -138,6 +137,7 @@ public class Login extends AppCompatActivity {
                                     .addOnFailureListener(e -> Log.e("Login", "Error al insertar la ruta del Excel en Firestore", e));
 
                             Intent intent = new Intent(this, Contador_Hores.class);
+                            intent.putExtra("ruta_horari",filePath); // li fiquem la ruta del nou excel
                             startActivity(intent);
 
                         } else {
@@ -148,6 +148,7 @@ public class Login extends AppCompatActivity {
                     }
                 } else {
                     Intent intent = new Intent(this, Contador_Hores.class);
+                    intent.putExtra("ruta_horari", rutaHorari); // li deixem la ruta al horari que ja te a la db
                     startActivity(intent);
                 }
             }

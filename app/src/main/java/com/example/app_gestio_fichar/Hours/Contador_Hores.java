@@ -18,8 +18,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,6 +38,7 @@ public class Contador_Hores extends AppCompatActivity {
     private Handler handler = new Handler();
     private Validador validador;
     private Context context;
+    private Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,77 +58,72 @@ public class Contador_Hores extends AppCompatActivity {
 
         countBtn.setOnClickListener(v -> contar(v));
 
-        String filePath = getIntent().getStringExtra("filePath");
-        if (filePath != null) {
-            textView3.setText("Ruta del archivo recibida");
-        } else {
-            textView3.setText("No se ha recibido la ruta del archivo");
-        }
     }
 
     public void contar(View view) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            textView4.setText("Ha pillat el usuari");
+            textViewNif.setText("Ha pillat el usuari: " + currentUser.getEmail());
             db.collection("Empleats").document(currentUser.getEmail()).get()
                     .addOnSuccessListener(documentSnapshot -> {
-                        try {
-                            if (documentSnapshot.exists()) {
-                                String filePath = documentSnapshot.getString("ruta_horari");
+                        if (documentSnapshot.exists()) {
+                            Log.e("Contador_Hores", documentSnapshot.toString());
+                            Log.e("Contador_hores", getContentResolver().toString());
+                            String ruta_horari = getIntent().getStringExtra("ruta_horari");
+                            textViewEmail.setText(ruta_horari); // da document/primary:WhatsApp/Horari.xlsx
+                            uri = Uri.parse(ruta_horari); // done null
 
-                                File file = new File(filePath);
-                                if (!file.exists()) {
-                                    throw new FileNotFoundException("El archivo no existe: " + file.getAbsolutePath());
-                                } else {
-                                    textViewEmail.setText("El archivo existe");
+                            try {
 
-                                    try {
-                                        String outputFileName = getFilesDir().getPath() + "/HorariOutput";
-                                        Info_horari horari = new Info_horari().llegirCSV(Uri.fromFile(file), getContentResolver(), LocalDateTime.now());
+                                textView3.setText("Ruta: " + uri.getPath());
+                                Info_horari horari = new Info_horari();
+                                horari = horari.llegirCSV(uri, getContentResolver(), LocalDateTime.now());
 
-                                        if (horari != null) {
-                                            int dia = horari.getDia();
-                                            String[] hores = horari.getHores().toArray(new String[0]);
-                                            String[] x = horari.getX().toArray(new String[0]);
+                                // logs
 
-                                            // Usar los datos recopilados para determinar si es la hora de trabajo
-                                            boolean isWorkingTime = validador.isWorkingTime(dia, hores, x, LocalDateTime.now().getHour(), LocalDateTime.now().getMinute());
+                                textView3.setText("Ruta: " + uri.getPath() + "\n" /*+ "Contingut: " + "\n" + horari.getDia() + " hores: " + horari.getHores().toString() + " x: " + horari.getX().toString()*/);
 
-                                            if (isWorkingTime) {
-                                                // Iniciar el temporizador para contar las horas
-                                                if (timer == null) {
-                                                    worked_hours.setText("0");
-                                                    timer = new Timer();
-                                                    timer.scheduleAtFixedRate(new TimerTask() {
-                                                        @Override
-                                                        public void run() {
-                                                            updateUI(documentSnapshot, 1);
-                                                        }
-                                                    }, 0, TimeUnit.HOURS.toMillis(1));
+                                //logs
 
-                                                    countBtn.setEnabled(false);
+                                if (horari != null) {
+                                    int dia = horari.getDia();
+                                    String[] hores = horari.getHores().toArray(new String[0]);
+                                    String[] x = horari.getX().toArray(new String[0]);
+
+                                    // Usar los datos recopilados para determinar si es la hora de trabajo
+                                    boolean isWorkingTime = validador.isWorkingTime(dia, hores, x, LocalDateTime.now().getHour(), LocalDateTime.now().getMinute());
+
+                                    if (isWorkingTime) {
+                                        // Iniciar el temporizador para contar las horas
+                                        if (timer == null) {
+                                            worked_hours.setText("0");
+                                            timer = new Timer();
+                                            timer.scheduleAtFixedRate(new TimerTask() {
+                                                @Override
+                                                public void run() {
+                                                    updateUI(documentSnapshot, 1);
                                                 }
-                                            } else {
-                                                textView3.setText("No es hora de trabajo según el horario");
-                                            }
-                                        } else {
-                                            textView3.setText("Error al obtener el horario");
-                                        }
+                                            }, 0, TimeUnit.HOURS.toMillis(1));
 
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                        Log.e("Contador_Hores", "Error al obtener datos de Firebase", e);
+                                            countBtn.setEnabled(false);
+                                        }
+                                    } else {
+                                        textView3.setText("No es hora de trabajo según el horario");
                                     }
+                                } else {
+                                    textView3.setText("Error al obtener el horario");
                                 }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.e("Contador_Hores", "Error al obtener datos de Firebase", e);
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.e("Contador_Hores", "Error al obtener datos de Firebase", e);
                         }
                     });
         } else {
             textView4.setText("No se ha obtenido el usuario");
         }
+
     }
 
     private void updateUI(DocumentSnapshot documentSnapshot, long hoursToAdd) {
