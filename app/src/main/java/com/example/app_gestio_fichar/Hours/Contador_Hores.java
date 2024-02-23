@@ -55,6 +55,14 @@ public class Contador_Hores extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         validador = new Validador();
         context = this;
+        String uriString = getIntent().getStringExtra("file_uri");
+        uri = Uri.parse(uriString);
+
+        if (uri != null && !uri.getPath().isEmpty()) {
+            textView2.setText("uri: " + uri.getPath());
+        } else {
+            textView2.setText("uri es null");
+        }
 
         countBtn.setOnClickListener(v -> contar(v));
 
@@ -67,21 +75,16 @@ public class Contador_Hores extends AppCompatActivity {
             db.collection("Empleats").document(currentUser.getEmail()).get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
-                            Log.e("Contador_Hores", documentSnapshot.toString());
-                            Log.e("Contador_hores", getContentResolver().toString());
-                            String ruta_horari = getIntent().getStringExtra("ruta_horari");
-                            textViewEmail.setText(ruta_horari); // da document/primary:WhatsApp/Horari.xlsx
-                            uri = Uri.parse(ruta_horari); // done null
+                            String ruta_horari = documentSnapshot.getString("ruta_horari");
 
                             try {
 
-                                textView3.setText("Ruta: " + uri.getPath());
                                 Info_horari horari = new Info_horari();
                                 horari = horari.llegirCSV(uri, getContentResolver(), LocalDateTime.now());
 
                                 // logs
 
-                                textView3.setText("Ruta: " + uri.getPath() + "\n" /*+ "Contingut: " + "\n" + horari.getDia() + " hores: " + horari.getHores().toString() + " x: " + horari.getX().toString()*/);
+                                textView4.setText(horari.toString());
 
                                 //logs
 

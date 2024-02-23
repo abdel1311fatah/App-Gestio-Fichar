@@ -135,10 +135,18 @@ public class Login extends AppCompatActivity {
                                     .set(empleat)
                                     .addOnSuccessListener(aVoid -> Log.d("Login", "Ruta del Excel insertada en Firestore"))
                                     .addOnFailureListener(e -> Log.e("Login", "Error al insertar la ruta del Excel en Firestore", e));
+                            if (selectedFileUri != null) {
 
                             Intent intent = new Intent(this, Contador_Hores.class);
-                            intent.putExtra("ruta_horari",filePath); // li fiquem la ruta del nou excel
+
+                                intent.putExtra("ruta_horari", selectedFileUri.getPath()); // Poner la ruta del archivo en el intent
+                                intent.putExtra("file_uri", selectedFileUri.toString()); // Agregar la URI como dato extra
+
                             startActivity(intent);
+
+                            }else{
+                                Toast.makeText(Login.this, "No has pogut anar a l activity per a contar", Toast.LENGTH_SHORT).show();
+                            }
 
                         } else {
                             Toast.makeText(Login.this, "Error al obtener la ruta del archivo", Toast.LENGTH_SHORT).show();
@@ -148,7 +156,12 @@ public class Login extends AppCompatActivity {
                     }
                 } else {
                     Intent intent = new Intent(this, Contador_Hores.class);
-                    intent.putExtra("ruta_horari", rutaHorari); // li deixem la ruta al horari que ja te a la db
+
+                    if (selectedFileUri != null) {
+                        intent.putExtra("ruta_horari", rutaHorari);
+                        intent.putExtra("file_uri", selectedFileUri.toString()); // Agregar la URI como dato extra
+                    }
+
                     startActivity(intent);
                 }
             }
