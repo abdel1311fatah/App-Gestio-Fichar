@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/fondo"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Hours.Contador_Hores">
@@ -10,8 +11,9 @@
         android:layout_width="409dp"
         android:layout_height="201dp"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="1dp">
 
         <TextView
             android:id="@+id/TextViewDNI"
@@ -38,12 +40,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+
         <Button
             android:id="@+id/countBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/custom_button_background"
             android:onClick="contar"
-            android:text="Començar a contar" />
+            android:text="Iniciar contador"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/worked_hours"
