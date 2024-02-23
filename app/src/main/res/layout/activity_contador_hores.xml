@@ -48,7 +48,7 @@
             android:layout_margin="16dp"
             android:background="@drawable/custom_button_background"
             android:onClick="contar"
-            android:text="INICIAR CONTADOR"
+            android:text="Iniciar contador"
             android:textColor="#FFFFFF"
             android:textSize="18sp" />
 
