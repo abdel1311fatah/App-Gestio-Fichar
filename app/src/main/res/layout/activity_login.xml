@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
             android:ems="10"
-            android:hint="Email"
+            android:hint="Correu electrònic:"
             android:inputType="textEmailAddress" />
 
         <EditText
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:ems="10"
-            android:hint="Password"
+            android:hint="Contraseña:"
             android:inputType="textPassword" />
 
         <Button
@@ -46,7 +46,7 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/custom_button_background"
             android:onClick="login"
-            android:text="Login"
+            android:text="Loguejar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -59,7 +59,7 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/custom_button_background"
             android:onClick="openFilePicker"
-            android:text="Seleccionar Archivo"
+            android:text="Seleccionar archiu"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
