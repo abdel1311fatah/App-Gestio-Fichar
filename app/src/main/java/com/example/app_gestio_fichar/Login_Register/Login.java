@@ -165,11 +165,11 @@ public class Login extends AppCompatActivity {
                 "Error al verificar la ruta del Excel en Firestore", Toast.LENGTH_SHORT).show());
     }
 
-    private void veureRuta(View view) throws IOException {
+    public void veureRuta(View view) throws IOException {
         if (selectedFileUri != null) { // que hagui seleccionat un arxiu
             Info_horari infoHorari = new Info_horari();
             Info_horari horari = infoHorari.llegirCSV(selectedFileUri, getContentResolver(), LocalDateTime.now());
-            textView5.setText("Ruta: " + selectedFileUri.getPath() + "\n" + "Contingut: " + "\n" + horari.getDia() + " hores: " + horari.getHores().toString() + " x: " + horari.getX().toString());
+            textView5.setText("Ruta: " + selectedFileUri.getPath() + "\n" + "Contingut: " + horari.toString() + horari.getX().size() + " X");
         } else {
             textView5.setText("Has de seleccionar un arxiu");
         }
