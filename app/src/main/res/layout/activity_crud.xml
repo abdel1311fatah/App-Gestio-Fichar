@@ -28,20 +28,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/editTextContrasena"
+            android:id="@+id/editTextPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:hint="Contraseña:"
             android:inputType="textPassword" />
-
-        <Button
-            android:id="@+id/saveBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Guardar"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/custom_button_background"/>
 
         <Button
             android:id="@+id/deleteBtn"
@@ -52,23 +44,18 @@
             android:background="@drawable/custom_button_background"/>
 
         <Button
-            android:id="@+id/getBtn"
+            android:id="@+id/mainBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Buscar"
             android:layout_marginTop="8dp"
-            android:background="@drawable/custom_button_background"/>
-
-        <TextView
-            android:id="@+id/result"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:layout_marginTop="8dp"
+            android:background="@drawable/custom_button_background"
+            android:onClick="goToMain"
+            android:text="Tornar al menu principal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     </LinearLayout>
 
 

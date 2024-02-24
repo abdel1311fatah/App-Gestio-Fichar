@@ -102,19 +102,4 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonLogin"
         app:layout_constraintVertical_bias="0.105" />
 
-    <Button
-        android:id="@+id/goToCount"
-        android:layout_width="92dp"
-        android:layout_height="45dp"
-        android:background="@drawable/custom_button_background"
-        android:onClick="goToCount"
-        android:text="Contar"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2"
-        app:layout_constraintVertical_bias="0.269" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

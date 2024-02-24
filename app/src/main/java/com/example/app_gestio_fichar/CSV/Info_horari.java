@@ -36,9 +36,7 @@ public class Info_horari {
         StringBuilder dades = new StringBuilder();
         int diaActual = localDateTime.getDayOfWeek().getValue(); // va del 1 al 7, per aixo no començe per 0
         // int diaActual = 2; // va del 1 al 7, per aixo no començe per 0
-        int horaActual = localDateTime.getHour();
-        int minutActual = localDateTime.getMinute();
-        int numeroDia = 1; // 1 dilluns, 2 dimarts, per saber si el dia de la setmana del horari es avui
+        int numeroDia = 1; // 1 dilluns, 2 dimarts, es el contador per saber si el dia de la setmana del horari es avui
         int rowNumber = 0; // per saber en quina fila estem
         int cellNumber = 0; // per saber en quina cela estem
         int columnNumber = 0;
@@ -69,7 +67,7 @@ public class Info_horari {
                             horari.getHores().add(cell.toString());
                         }
 
-                        // Agrupar las 'x' por día
+                        // Agrupe les x per dia si es el dia actual
                         if(cell.toString().equalsIgnoreCase("x") && diaActual == cell.getColumnIndex()){
                             horari.getX().add(cell.toString());
                             Log.e("Info_horari", "X: " + cell.toString() + " " + cell.getColumnIndex() + " de la fila " + rowNumber + " de la columna " + columnNumber);

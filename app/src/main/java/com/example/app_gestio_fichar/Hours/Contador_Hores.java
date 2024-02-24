@@ -1,6 +1,7 @@
 package com.example.app_gestio_fichar.Hours;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.app_gestio_fichar.CSV.Info_horari;
+import com.example.app_gestio_fichar.MainActivity;
 import com.example.app_gestio_fichar.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,11 +28,8 @@ import java.util.concurrent.TimeUnit;
 public class Contador_Hores extends AppCompatActivity {
 
     private Button countBtn;
-    private TextView textViewNif;
     private TextView textViewEmail;
     private TextView worked_hours;
-    private TextView textView2;
-    private TextView textView3;
     private TextView textView4;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
@@ -46,23 +45,13 @@ public class Contador_Hores extends AppCompatActivity {
         setContentView(R.layout.activity_contador_hores);
 
         countBtn = findViewById(R.id.countBtn);
-        textViewNif = findViewById(R.id.TextViewDNI);
         textViewEmail = findViewById(R.id.TextViewEmail);
         worked_hours = findViewById(R.id.worked_hours);
-        textView2 = findViewById(R.id.textView2);
-        textView3 = findViewById(R.id.textView3);
         textView4 = findViewById(R.id.textView4);
         mAuth = FirebaseAuth.getInstance();
         validador = new Validador();
-        context = this;
         String uriString = getIntent().getStringExtra("file_uri");
         uri = Uri.parse(uriString);
-
-        if (uri != null && !uri.getPath().isEmpty()) {
-            textView2.setText("uri: " + uri.getPath());
-        } else {
-            textView2.setText("uri es null");
-        }
 
         countBtn.setOnClickListener(v -> contar(v));
     }
@@ -70,7 +59,7 @@ public class Contador_Hores extends AppCompatActivity {
     public void contar(View view) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            textViewNif.setText("Ha pillat el usuari: " + currentUser.getEmail());
+            textViewEmail.setText("Usuari " + currentUser.getEmail());
             db.collection("Empleats").document(currentUser.getEmail()).get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot != null) {
@@ -88,30 +77,32 @@ public class Contador_Hores extends AppCompatActivity {
                                     if (dia == diaActual) {
 
                                         if (validador.isHomeTime(hores)) {
-                                            textView3.setText("No estas en una hora de les del horari");
+                                            worked_hours.setText("No estas en una hora de les del horari");
                                         } else {
                                             try {
                                                 if (timer == null) {
-                                                    textViewEmail.setText("0");
+                                                    worked_hours.setText("0");
                                                     timer = new Timer();
                                                     timer.scheduleAtFixedRate(new TimerTask() {
                                                         @Override
                                                         public void run() {
                                                             runOnUiThread(() -> updateUI(documentSnapshot, 1));
                                                         }
-                                                    }, TimeUnit.HOURS.toMillis(1), TimeUnit.HOURS.toMillis(1)); // una hora de delay per no spamejar les hores, el delay es el TimeUnits.Hours.toMillis(1), que es una hora i nomes es fa al entrar
+                                                        // aqui fa el contador d' hora en hora
+                                                        // una hora de delay per no spamejar les hores, el delay es el TimeUnits.Hours.toMillis(1), que es una hora i nomes es fa al entrar
+                                                    }, TimeUnit.HOURS.toMillis(1), TimeUnit.HOURS.toMillis(1));
 
                                                     countBtn.setEnabled(false);
                                                 }
                                             } catch (Exception e) {
                                                 e.printStackTrace();
-                                                Log.e("Contador_Hores", "Error en contar", e);
+                                                Log.e("Contador_Hores", "Error al contar", e);
                                             }
                                         }
                                     }
 
                                 } else {
-                                    textView3.setText("Error al obtener el horario");
+                                    textViewEmail.setText("No s ha pogut obtenir l horario");
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -120,7 +111,7 @@ public class Contador_Hores extends AppCompatActivity {
                         }
                     });
         } else {
-            textView4.setText("No se ha obtenido el usuario");
+            textView4.setText("No s' ha obtingut al usuari");
         }
     }
 
@@ -141,9 +132,9 @@ public class Contador_Hores extends AppCompatActivity {
 
             String workedHoursString = String.valueOf(workedHours);
             handler.post(() -> worked_hours.setText(workedHoursString + " horas"));
-            textViewEmail.setText(workedHoursString);
+            worked_hours.setText(workedHoursString);
         } catch (NumberFormatException e) {
-            Log.e("Contador_Hores", "Error al convertir 'worked_hours' a número", e);
+            Log.e("Contador_Hores", "worked_hours no s ha recollit be", e);
         }
     }
 
@@ -154,5 +145,9 @@ public class Contador_Hores extends AppCompatActivity {
             timer.cancel();
             timer = null;
         }
+    }
+    public void goToMain(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }

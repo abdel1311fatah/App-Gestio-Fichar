@@ -74,7 +74,7 @@ public class Login extends AppCompatActivity {
         if (requestCode == PICK_FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             selectedFileUri = data.getData();
             String selectedFilePath = selectedFileUri.getPath();
-            Toast.makeText(this, "Archivo seleccionado: " + selectedFilePath, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Archiu seleccionat: " + selectedFilePath, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -84,7 +84,7 @@ public class Login extends AppCompatActivity {
 
         if (!email.isEmpty() && !password.isEmpty()) {
             if (selectedFileUri == null) {
-                Toast.makeText(Login.this, "Debes seleccionar un archivo antes de iniciar sesión", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Login.this, "Has de seleccionar un excel", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -96,12 +96,12 @@ public class Login extends AppCompatActivity {
                                 checkAndUpdateRutaHorari(user.getEmail());
                             }
                         } else {
-                            Toast.makeText(Login.this, "El correo o la contraseña son incorrectos",
+                            Toast.makeText(Login.this, "El correu o la contrasenya no son correctes",
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
         } else {
-            Toast.makeText(Login.this, "El correo y la contraseña no pueden estar vacíos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Login.this, "Has de ficar el correu i la contrasenya", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -141,10 +141,10 @@ public class Login extends AppCompatActivity {
                             }
 
                         } else {
-                            Toast.makeText(Login.this, "Error al obtener la ruta del archivo", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, "No has pogut agafar la ruta del excel", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(Login.this, "Ningún archivo seleccionado", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Login.this, "Has de seleccionar un archiu", Toast.LENGTH_SHORT).show();
                     }
 
                 } else {
@@ -153,6 +153,18 @@ public class Login extends AppCompatActivity {
 
                     if (selectedFileUri != null) {
                         rutaHorari = selectedFileUri.getPath();
+
+                        String nif = documentSnapshot.getString("nif");
+                        String email = documentSnapshot.getString("email");
+                        String password = documentSnapshot.getString("password");
+                        String name = documentSnapshot.getString("name");
+                        String surname = documentSnapshot.getString("surname");
+                        String charge = documentSnapshot.getString("charge");
+                        long workedHours = documentSnapshot.getLong("worked_hours");
+
+                        Crud crud = new Crud(this);
+                        crud.save(nif,email,password,name,surname,charge,workedHours,rutaHorari);
+
                         intent.putExtra("ruta_horari", rutaHorari);
                         intent.putExtra("file_uri", selectedFileUri.toString()); // Agregar la URI como dato extra
                     }
@@ -169,7 +181,7 @@ public class Login extends AppCompatActivity {
         if (selectedFileUri != null) { // que hagui seleccionat un arxiu
             Info_horari infoHorari = new Info_horari();
             Info_horari horari = infoHorari.llegirCSV(selectedFileUri, getContentResolver(), LocalDateTime.now());
-            textView5.setText("Ruta: " + selectedFileUri.getPath() + "\n" + "Contingut: " + horari.toString() + horari.getX().size() + " X");
+            textView5.setText("Ruta: " + selectedFileUri.getPath() + "\n" + "Contingut:\n " + horari.toString() + " \ni te " + horari.getX().size() + " X");
         } else {
             textView5.setText("Has de seleccionar un arxiu");
         }

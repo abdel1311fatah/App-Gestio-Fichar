@@ -33,7 +33,7 @@ public class Register extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         EditText editTextEmail = findViewById(R.id.editTextEmail);
-        EditText editTextContrasena = findViewById(R.id.editTextContrasena);
+        EditText editTextContrasena = findViewById(R.id.editTextPassword);
         EditText editTextDNI = findViewById(R.id.editTextDni);
         EditText editTextNom = findViewById(R.id.editTextNombre);
         EditText editTextCognom = findViewById(R.id.editTextApellido);

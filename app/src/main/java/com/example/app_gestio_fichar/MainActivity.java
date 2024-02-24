@@ -6,7 +6,6 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.app_gestio_fichar.Hours.Contador_Hores;
 import com.example.app_gestio_fichar.Login_Register.Login;
 import com.example.app_gestio_fichar.Login_Register.Register;
 
@@ -32,12 +31,6 @@ public class MainActivity extends AppCompatActivity {
     public void goToLogin(View view) {
 
         Intent intent = new Intent(this, Login.class);
-        startActivity(intent);
-
-    }
-    public void goToCount(View view) {
-
-        Intent intent = new Intent(this, Contador_Hores.class);
         startActivity(intent);
 
     }
