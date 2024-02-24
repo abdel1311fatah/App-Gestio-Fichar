@@ -28,7 +28,7 @@ public class Crud extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     String nif, email, password, name, surname, charge, ruta_horari;
-    int workedHours;
+    long workedHours;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -94,7 +94,7 @@ public class Crud extends AppCompatActivity {
     }
 
 
-    public void save(String nif, String email, String password, String name, String surname, String charge, int workedHours, String ruta_horari) {
+    public void save(String nif, String email, String password, String name, String surname, String charge, long workedHours, String ruta_horari) {
 
         // Crear un mapa con los datos que deseas almacenar
         Map<String, Object> empleado = new HashMap<>();

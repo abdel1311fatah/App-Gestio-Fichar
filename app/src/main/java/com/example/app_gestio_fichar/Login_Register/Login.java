@@ -3,7 +3,6 @@ package com.example.app_gestio_fichar.Login_Register;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -13,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.app_gestio_fichar.CSV.Info_horari;
+import com.example.app_gestio_fichar.Crud;
 import com.example.app_gestio_fichar.Hours.Contador_Hores;
 import com.example.app_gestio_fichar.MainActivity;
 import com.example.app_gestio_fichar.R;
@@ -107,11 +107,11 @@ public class Login extends AppCompatActivity {
         userDocRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 String rutaHorari = documentSnapshot.getString("ruta_horari"); // ruta d excel guardada a la db
-                if (rutaHorari == null || rutaHorari.isEmpty()) {
+                if (rutaHorari == null || rutaHorari.isEmpty()) { // si la ruta guardada a la db esta buida o es null li asignem la nova ruta
                     if (selectedFileUri != null) {
                         String filePath = selectedFileUri.getPath();
                         if (filePath != null) {
-                            //Inserte la ruta al empleat
+
                             HashMap<String, String> empleat = new HashMap<>(); // agafem tots els camps per a que no es borrin
 
                             String nif = documentSnapshot.getString("nif");
@@ -122,30 +122,21 @@ public class Login extends AppCompatActivity {
                             String charge = documentSnapshot.getString("charge");
                             long workedHours = documentSnapshot.getLong("worked_hours");
 
-                            empleat.put("nif", nif);
-                            empleat.put("email", email);
-                            empleat.put("password", password);
-                            empleat.put("name", name);
-                            empleat.put("surname", surname);
-                            empleat.put("charge", charge);
-                            empleat.put("worked_hours", String.valueOf(workedHours));
-                            empleat.put("ruta_horari", filePath);
+                           Crud crud = new Crud();
+                           crud.save(nif,email,password,name,surname,charge,workedHours,selectedFileUri.getPath());
 
-                            db.collection("Empleats").document(userEmail)
-                                    .set(empleat)
-                                    .addOnSuccessListener(aVoid -> Log.d("Login", "Ruta del Excel insertada en Firestore"))
-                                    .addOnFailureListener(e -> Log.e("Login", "Error al insertar la ruta del Excel en Firestore", e));
                             if (selectedFileUri != null) {
 
-                            Intent intent = new Intent(this, Contador_Hores.class);
+                                Intent intent = new Intent(this, Contador_Hores.class);
+                                String a = selectedFileUri.getPath();
 
-                                intent.putExtra("ruta_horari", selectedFileUri.getPath()); // Poner la ruta del archivo en el intent
+                                intent.putExtra("ruta_horari", a); // Poner la ruta del archivo en el intent
                                 intent.putExtra("file_uri", selectedFileUri.toString()); // Agregar la URI como dato extra
 
-                            startActivity(intent);
+                                startActivity(intent);
 
-                            }else{
-                                Toast.makeText(Login.this, "No has pogut anar a l activity per a contar", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(Login.this, "No has agafat cap archiu", Toast.LENGTH_SHORT).show();
                             }
 
                         } else {
@@ -155,6 +146,7 @@ public class Login extends AppCompatActivity {
                         Toast.makeText(Login.this, "Ningún archivo seleccionado", Toast.LENGTH_SHORT).show();
                     }
                 } else {
+
                     Intent intent = new Intent(this, Contador_Hores.class);
 
                     if (selectedFileUri != null) {
@@ -163,6 +155,7 @@ public class Login extends AppCompatActivity {
                     }
 
                     startActivity(intent);
+
                 }
             }
         }).addOnFailureListener(e -> Toast.makeText(Login.this,
@@ -172,12 +165,13 @@ public class Login extends AppCompatActivity {
     private void veureRuta(View view) throws IOException {
         if (selectedFileUri != null) { // que hagui seleccionat un arxiu
             Info_horari infoHorari = new Info_horari();
-            Info_horari horari = infoHorari.llegirCSV(selectedFileUri, getContentResolver(),LocalDateTime.now());
+            Info_horari horari = infoHorari.llegirCSV(selectedFileUri, getContentResolver(), LocalDateTime.now());
             textView5.setText("Ruta: " + selectedFileUri.getPath() + "\n" + "Contingut: " + "\n" + horari.getDia() + " hores: " + horari.getHores().toString() + " x: " + horari.getX().toString());
         } else {
             textView5.setText("Has de seleccionar un arxiu");
         }
     }
+
     private void goToMain() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

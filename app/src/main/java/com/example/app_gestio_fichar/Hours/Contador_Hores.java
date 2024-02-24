@@ -75,7 +75,6 @@ public class Contador_Hores extends AppCompatActivity {
             db.collection("Empleats").document(currentUser.getEmail()).get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
-                            String ruta_horari = documentSnapshot.getString("ruta_horari");
 
                             try {
 
@@ -84,7 +83,7 @@ public class Contador_Hores extends AppCompatActivity {
 
                                 // logs
 
-                                textView4.setText(horari.toString());
+                                textView4.setText(horari.toString() + horari.getX().size());
 
                                 //logs
 
