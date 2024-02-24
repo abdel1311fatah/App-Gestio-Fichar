@@ -23,7 +23,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 public class Login extends AppCompatActivity {
 
@@ -80,12 +79,15 @@ public class Login extends AppCompatActivity {
     }
 
     private void login() {
-        emailField.setText("abdel13fatah@gmail.com");
         String email = emailField.getText().toString();
-        passwordField.setText("123456789");
         String password = passwordField.getText().toString();
 
         if (!email.isEmpty() && !password.isEmpty()) {
+            if (selectedFileUri == null) {
+                Toast.makeText(Login.this, "Debes seleccionar un archivo antes de iniciar sesión", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
@@ -94,10 +96,12 @@ public class Login extends AppCompatActivity {
                                 checkAndUpdateRutaHorari(user.getEmail());
                             }
                         } else {
-                            Toast.makeText(Login.this, "El correu o la contrasenya son incorrectes",
+                            Toast.makeText(Login.this, "El correo o la contraseña son incorrectos",
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
+        } else {
+            Toast.makeText(Login.this, "El correo y la contraseña no pueden estar vacíos", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -111,8 +115,6 @@ public class Login extends AppCompatActivity {
                     if (selectedFileUri != null) {
                         String filePath = selectedFileUri.getPath();
                         if (filePath != null) {
-
-                            HashMap<String, String> empleat = new HashMap<>(); // agafem tots els camps per a que no es borrin
 
                             String nif = documentSnapshot.getString("nif");
                             String email = documentSnapshot.getString("email");
@@ -145,11 +147,13 @@ public class Login extends AppCompatActivity {
                     } else {
                         Toast.makeText(Login.this, "Ningún archivo seleccionado", Toast.LENGTH_SHORT).show();
                     }
+
                 } else {
 
                     Intent intent = new Intent(this, Contador_Hores.class);
 
                     if (selectedFileUri != null) {
+                        rutaHorari = selectedFileUri.getPath();
                         intent.putExtra("ruta_horari", rutaHorari);
                         intent.putExtra("file_uri", selectedFileUri.toString()); // Agregar la URI como dato extra
                     }

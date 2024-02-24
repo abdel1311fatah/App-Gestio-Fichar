@@ -77,14 +77,11 @@ public class Contador_Hores extends AppCompatActivity {
                         if (documentSnapshot.exists()) {
 
                             try {
-
                                 Info_horari horari = new Info_horari();
                                 horari = horari.llegirCSV(uri, getContentResolver(), LocalDateTime.now());
 
                                 // logs
-
                                 textView4.setText(horari.toString() + horari.getX().size());
-
                                 //logs
 
                                 if (horari != null) {
@@ -92,10 +89,11 @@ public class Contador_Hores extends AppCompatActivity {
                                     String[] hores = horari.getHores().toArray(new String[0]);
                                     String[] x = horari.getX().toArray(new String[0]);
 
-                                    // Usar los datos recopilados para determinar si es la hora de trabajo
-                                    boolean isWorkingTime = validador.isWorkingTime(dia, hores, x, LocalDateTime.now().getHour(), LocalDateTime.now().getMinute());
-
-                                    if (isWorkingTime) {
+                                    // Validar si es fin de semana o fuera de horas de trabajo
+                                    // if (validador.isWeekend(dia) || validador.isHomeTime(hores[0])) {
+                                    if (validador.isHomeTime(hores[0])) {
+                                        textView3.setText("Es fin de semana o fuera de horas de trabajo");
+                                    } else {
                                         // Iniciar el temporizador para contar las horas
                                         if (timer == null) {
                                             worked_hours.setText("0");
@@ -109,8 +107,6 @@ public class Contador_Hores extends AppCompatActivity {
 
                                             countBtn.setEnabled(false);
                                         }
-                                    } else {
-                                        textView3.setText("No es hora de trabajo según el horario");
                                     }
                                 } else {
                                     textView3.setText("Error al obtener el horario");
@@ -125,9 +121,7 @@ public class Contador_Hores extends AppCompatActivity {
         } else {
             textView4.setText("No se ha obtenido el usuario");
         }
-
     }
-
     private void updateUI(DocumentSnapshot documentSnapshot, long hoursToAdd) {
         try {
             String workedHoursString = documentSnapshot.getString("worked_hours");
