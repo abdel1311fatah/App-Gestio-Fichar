@@ -1,5 +1,6 @@
 package com.example.app_gestio_fichar;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,12 +27,14 @@ public class Crud extends AppCompatActivity {
     private Button deleteBtn;
     private Button saveBtn;
     private FirebaseAuth mAuth;
-
+    private Context mContext;
     String nif, email, password, name, surname, charge, ruta_horari;
     long workedHours;
-
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    public Crud(Context context) {
+        this.mContext = context;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,21 +114,28 @@ public class Crud extends AppCompatActivity {
         db.collection("Empleats").document(email).set(empleado)
                 .addOnSuccessListener(aVoid -> {
                     // Éxito al guardar en Firestore
-                    Toast.makeText(Crud.this, "Datos guardados correctamente", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Datos guardados correctamente", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     // Error al guardar en Firestore
-                    Toast.makeText(Crud.this, "Error al guardar datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Error al guardar datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
     public void delete(String email) {
-        db.collection("Empleats").document(email).delete()
+        FirebaseAuth.getInstance().getCurrentUser().delete()
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(Crud.this, "Has borrat l' empleat", Toast.LENGTH_SHORT).show();
+                    // Eliminar el documento en Firestore después de borrar el usuario de autenticación
+                    FirebaseFirestore.getInstance().collection("Empleats").document(email).delete()
+                            .addOnSuccessListener(aVoidFirestore -> {
+                                Toast.makeText(this, "Has borrat l'empleat i l'usuari", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(eFirestore -> {
+                                Toast.makeText(this, "No s'ha pogut eliminar l'empleat de Firestore: " + eFirestore.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(Crud.this, "No s' ha pogut eliminar l' empleat" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "No s'ha pogut eliminar l'usuari d'autenticació: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 }

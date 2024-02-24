@@ -124,15 +124,14 @@ public class Login extends AppCompatActivity {
                             String charge = documentSnapshot.getString("charge");
                             long workedHours = documentSnapshot.getLong("worked_hours");
 
-                           Crud crud = new Crud();
+                           Crud crud = new Crud(this);
                            crud.save(nif,email,password,name,surname,charge,workedHours,selectedFileUri.getPath());
 
                             if (selectedFileUri != null) {
 
                                 Intent intent = new Intent(this, Contador_Hores.class);
-                                String a = selectedFileUri.getPath();
 
-                                intent.putExtra("ruta_horari", a); // Poner la ruta del archivo en el intent
+                                intent.putExtra("ruta_horari", filePath); // Poner la ruta del archivo en el intent
                                 intent.putExtra("file_uri", selectedFileUri.toString()); // Agregar la URI como dato extra
 
                                 startActivity(intent);
