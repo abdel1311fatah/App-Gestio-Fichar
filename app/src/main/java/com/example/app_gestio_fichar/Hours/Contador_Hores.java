@@ -76,8 +76,8 @@ public class Contador_Hores extends AppCompatActivity {
                                     int diaActual = LocalDateTime.now().getDayOfWeek().getValue();
                                     if (dia == diaActual) {
 
-                                        if (validador.isHomeTime(hores)) {
-                                            worked_hours.setText("No estas en una hora de les del horari");
+                                        if (validador.isHomeTime(hores) || validador.isWeekend(diaActual)){
+                                            worked_hours.setText("No estas en una hora de les del horari o estas a cap de setmana");
                                         } else {
                                             try {
                                                 if (timer == null) {

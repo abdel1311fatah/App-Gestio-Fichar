@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
-
 public class Info_horari {
     private int dia; // dies de la setmana
     private ArrayList<String> hores = new ArrayList<>(); // hores de la feina
@@ -32,23 +31,22 @@ public class Info_horari {
     }
     public Info_horari llegirCSV(Uri selectedFileUri, ContentResolver contentResolver, LocalDateTime localDateTime) throws IOException {
         Info_horari horari = new Info_horari();
-        InputStream myInput = contentResolver.openInputStream(selectedFileUri);
-        StringBuilder dades = new StringBuilder();
+        InputStream myInput = contentResolver.openInputStream(selectedFileUri); // agafa el fitxer del uri
         int diaActual = localDateTime.getDayOfWeek().getValue(); // va del 1 al 7, per aixo no començe per 0
         // int diaActual = 2; // va del 1 al 7, per aixo no començe per 0
         int numeroDia = 1; // 1 dilluns, 2 dimarts, es el contador per saber si el dia de la setmana del horari es avui
         int rowNumber = 0; // per saber en quina fila estem
         int cellNumber = 0; // per saber en quina cela estem
-        int columnNumber = 0;
+        int columnNumber = 0; // per saber en quina columna estem
 
         boolean primeraFila = true; // s' enten que la primera fila es on van els dies
 
         try {
-            XSSFWorkbook workbook = new XSSFWorkbook(myInput);
-            XSSFSheet sheet = workbook.getSheetAt(0);
-            Iterator<Row> rowIterator = sheet.rowIterator();
+            XSSFWorkbook workbook = new XSSFWorkbook(myInput); // objecte de la biblioteca de apache poi per llegir excel, agafe el archiu de la uri
+            XSSFSheet sheet = workbook.getSheetAt(0); // agafa la primera pagina del excel
+            Iterator<Row> rowIterator = sheet.rowIterator(); // iterator per recorrer les files del excel
 
-            while (rowIterator.hasNext()) { // recorre les files, es a dir, va de fila en fila
+            while (rowIterator.hasNext()) { // recorre les files, es a dir, va de fila en fila va de fila en fila, tipo de la 1 a la 2, de la 2 a la 3, etc
                 XSSFRow row = (XSSFRow) rowIterator.next(); // agafe la seguent fila del excel
                 Iterator<Cell> cellIterator = row.cellIterator(); // recorre les celes del excel, es un iterador per que una fila pot tenir varies celes
                 rowNumber++;
@@ -73,7 +71,6 @@ public class Info_horari {
                             Log.e("Info_horari", "X: " + cell.toString() + " " + cell.getColumnIndex() + " de la fila " + rowNumber + " de la columna " + columnNumber);
                         }
 
-                        dades.append(cell.toString()).append(" "); // agafe el contingut de la cela
                         numeroDia++; // al acabar el while acabe la fila, per lo que resetejem el contador
                     }
 
@@ -83,8 +80,6 @@ public class Info_horari {
                 }
                 // Incrementar el número de día al final de cada fila
                 numeroDia = 1;
-
-                dades.append("\n"); // ha acabat la fila, per lo que fa el salt de linia per tirar la seguent fila
                 cellNumber = 0;
                 columnNumber = 0; // Reiniciar el número de columna al final de cada fila
             }
