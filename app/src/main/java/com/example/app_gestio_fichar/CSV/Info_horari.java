@@ -23,7 +23,6 @@ public class Info_horari {
 
     public Info_horari() {
     }
-
     public Info_horari(int dia, ArrayList<String> hores, ArrayList<String> x) {
         this.dia = dia;
         this.hores = hores;
@@ -56,6 +55,7 @@ public class Info_horari {
 
                     // per exemple, al excel de proba no començe a la primera fila, començe a la segona, llavors es millor que no agafi les celes buides, el 7 es per que a que si dema a la mateixa hora no tens feina que et pugui agafar el dia igual
                     if (!cell.toString().isEmpty() && cell.getColumnIndex() <= 7) {
+
                         if (numeroDia == diaActual && primeraFila) { // si el dia de la setmana del horari es avui i es la primera fila
                             horari.setDia(numeroDia);
                             primeraFila = false; // ja no ha de llegir la fila dels dies de la setmana per que ja ha trobat el dia equivalent a avui
